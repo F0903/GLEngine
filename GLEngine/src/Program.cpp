@@ -29,7 +29,7 @@ std::vector<const char*> windowTitles = std::vector<const char*>
 	"SUMMON THE ELECTOR COUNTS!",
 	"May the Cah be with thee",
 	"DAVAI MACHIN",
-	"Yeet a neger skrr"
+	"Yeet a nibba skrr"
 };
 
 int buttonLabelIndex = 0;
@@ -187,7 +187,6 @@ int main()
 			if (ImGui::Button(buttonLabels[buttonLabelIndex], ImVec2(50, 35)))
 			{
 				buttonLabelIndex = buttonLabelIndex != buttonLabels.size() - 1 ? buttonLabelIndex + 1 : 0;
-				ImGui::Text("I like negere");
 			}
 
 			ImGui::Checkbox("Rainbow", &rbowShader);
