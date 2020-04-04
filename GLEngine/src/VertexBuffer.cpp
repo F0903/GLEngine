@@ -1,19 +1,21 @@
 #include "VertexBuffer.h"
 
+#include "Debug.h"
 #include <GL/glew.h>
 
 void VertexBuffer::Init()
 {
-	glGenBuffers(1, &bufID);
-	glBindBuffer(GL_ARRAY_BUFFER, bufID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLE_GL_DEBUG_CALL(glGenBuffers(1, &bufID));
+	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ARRAY_BUFFER, bufID));
+	GLE_GL_DEBUG_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW));
+	GLE_GL_DEBUG_CALL(glEnableVertexAttribArray(0));
+	GLE_GL_DEBUG_CALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos)));
+	GLE_GL_DEBUG_CALL(glEnableVertexAttribArray(1));
+	GLE_GL_DEBUG_CALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord)));
+	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-VertexBuffer::VertexBuffer(std::vector<Vertex>& verts) : vertices(verts)
+VertexBuffer::VertexBuffer(const std::vector<Vertex>& verts) : vertices(verts)
 {
 	Init();
 }
@@ -30,7 +32,7 @@ VertexBuffer::~VertexBuffer()
 
 void VertexBuffer::Bind() const
 {
-	glBindBuffer(GL_ARRAY_BUFFER, bufID);
+	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ARRAY_BUFFER, bufID));
 }
 
 void VertexBuffer::Unbind() const

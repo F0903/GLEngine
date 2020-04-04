@@ -12,7 +12,7 @@ class IndexBuffer
 
 	public:
 	IndexBuffer();
-	IndexBuffer(std::vector<unsigned int> ind);
+	IndexBuffer(const std::vector<unsigned int>& ind);
 	~IndexBuffer();
 
 	inline unsigned int IndexCount() const { return indecies.size(); }

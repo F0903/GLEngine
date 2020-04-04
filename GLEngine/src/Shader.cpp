@@ -2,6 +2,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
+
+#include "Debug.h"
+#include "TestResources.h"
 
 int Shader::GetUniformLocation(const char* name)
 {
@@ -26,33 +30,39 @@ void Shader::Bind() const
 void Shader::SetUniform(const char* name, float val)
 {
 	auto uni = GetUniformLocation(name);
-	glUniform1f(uni, val);
+	GLE_GL_DEBUG_CALL(glUniform1f(uni, val));
 }
 
 void Shader::SetUniform(const char* name, float val1, float val2)
 {
 	auto uni = GetUniformLocation(name);
-	glUniform2f(uni, val1, val2);
+	GLE_GL_DEBUG_CALL(glUniform2f(uni, val1, val2));
 }
 
 void Shader::SetUniform(const char* name, float val1, float val2, float val3)
 {
 	auto uni = GetUniformLocation(name);
-	glUniform3f(uni, val1, val2, val3);
+	GLE_GL_DEBUG_CALL(glUniform3f(uni, val1, val2, val3));
 }
 
 void Shader::SetUniform(const char* name, int val)
 {
 	auto uni = GetUniformLocation(name);
-	glUniform1i(uni, val);
+	GLE_GL_DEBUG_CALL(glUniform1i(uni, val));
+}
+
+void Shader::SetUniform(const char* name, unsigned int val)
+{
+	auto uni = GetUniformLocation(name);
+	GLE_GL_DEBUG_CALL(glUniform1ui(uni, val));
 }
 
 unsigned int Shader::CompileShaderPart(const ShaderPart& shader)
 {
 	auto id = glCreateShader((unsigned int)shader.type);
 	const char* src[1]{ shader.source.c_str() };
-	glShaderSource(id, 1, src, NULL);
-	glCompileShader(id);
+	GLE_GL_DEBUG_CALL(glShaderSource(id, 1, src, NULL));
+	GLE_GL_DEBUG_CALL(glCompileShader(id));
 
 	int result;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
@@ -67,7 +77,7 @@ unsigned int Shader::CompileShaderPart(const ShaderPart& shader)
 		glDeleteShader(id);
 		return 0;
 	}
-	glAttachShader(programID, id);
+	GLE_GL_DEBUG_CALL(glAttachShader(programID, id));
 	return id;
 }
 
@@ -84,14 +94,16 @@ size_t GetNumOfChars(const char* str)
 
 ShaderPart* Shader::ParseShader(const char* path, const char* shaderPartSeparator)
 {
-	auto f = std::ifstream(path);
+	bool fallback = !std::filesystem::exists(path);
+
 	std::stringstream ss[2];
+	std::istream& fileStream = *(fallback ? dynamic_cast<std::istream*>(&std::stringstream(testShader)) : dynamic_cast<std::istream*>(&std::ifstream(path))); // May cause eye cancer
 
 	auto numOfCharsInSep = GetNumOfChars(shaderPartSeparator);
 
 	ShaderPartType type = ShaderPartType::Invalid;
-	std::string line;
-	while (std::getline(f, line))
+	std::string line; 
+	while (std::getline(fileStream, line))
 	{
 		bool newShader = false;
 		for (size_t i = 0; i < numOfCharsInSep; i++)
@@ -140,10 +152,10 @@ Shader::Shader(const char* path)
 
 	ParseShader(path);
 
-	glLinkProgram(programID);
-	glValidateProgram(programID);
+	GLE_GL_DEBUG_CALL(glLinkProgram(programID));
+	GLE_GL_DEBUG_CALL(glValidateProgram(programID));
 
-	glUseProgram(programID);
+	GLE_GL_DEBUG_CALL(glUseProgram(programID));
 }
 
 Shader::~Shader()

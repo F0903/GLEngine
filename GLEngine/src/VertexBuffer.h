@@ -13,7 +13,7 @@ class VertexBuffer
 	void Init();
 
 	public:
-	VertexBuffer(std::vector<Vertex>& verts);
+	VertexBuffer(const std::vector<Vertex>& verts);
 	VertexBuffer(std::initializer_list<Vertex> init);
 	~VertexBuffer();
 

@@ -1,8 +1,8 @@
 @vertex
 #version 460 core
 
-layout(location=0) in vec4 position;
-layout(location = 0) in vec2 texCoord;
+in vec4 position;
+in vec2 texCoord;
 
 out vec3 vertPosition;
 out vec2 localTexCoord;
@@ -21,12 +21,11 @@ uniform float time;
 uniform vec2 res;
 uniform sampler2D tex;
 
-layout(location=0) out vec4 color;
 in vec4 gl_FragCoord;
-
 in vec2 localTexCoord;
-
 in vec3 vertPosition;
+
+out vec4 color;
 
 void main()
 {
@@ -36,5 +35,5 @@ void main()
 
 	vec4 texColor = texture(tex, localTexCoord);
 
-	color = vec4(col + texColor.rgb, 1);
+	color = vec4(col * texColor.rgb, texColor.a);
 }

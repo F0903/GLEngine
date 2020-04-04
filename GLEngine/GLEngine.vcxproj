@@ -87,7 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableModules>false</EnableModules>
       <AdditionalIncludeDirectories>$(PROJ_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -202,46 +202,17 @@
     <ClCompile Include="vendor\include\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="vendor\include\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="vendor\include\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="vendor\include\libpng\adler32.c" />
-    <ClCompile Include="vendor\include\libpng\compress.c" />
-    <ClCompile Include="vendor\include\libpng\crc32.c" />
-    <ClCompile Include="vendor\include\libpng\deflate.c" />
-    <ClCompile Include="vendor\include\libpng\example.c" />
-    <ClCompile Include="vendor\include\libpng\gzclose.c" />
-    <ClCompile Include="vendor\include\libpng\gzlib.c" />
-    <ClCompile Include="vendor\include\libpng\gzread.c" />
-    <ClCompile Include="vendor\include\libpng\gzwrite.c" />
-    <ClCompile Include="vendor\include\libpng\infback.c" />
-    <ClCompile Include="vendor\include\libpng\inffast.c" />
-    <ClCompile Include="vendor\include\libpng\inflate.c" />
-    <ClCompile Include="vendor\include\libpng\inftrees.c" />
-    <ClCompile Include="vendor\include\libpng\png.c" />
-    <ClCompile Include="vendor\include\libpng\pngerror.c" />
-    <ClCompile Include="vendor\include\libpng\pngget.c" />
-    <ClCompile Include="vendor\include\libpng\pngmem.c" />
-    <ClCompile Include="vendor\include\libpng\pngpread.c" />
-    <ClCompile Include="vendor\include\libpng\pngread.c" />
-    <ClCompile Include="vendor\include\libpng\pngrio.c" />
-    <ClCompile Include="vendor\include\libpng\pngrtran.c" />
-    <ClCompile Include="vendor\include\libpng\pngrutil.c" />
-    <ClCompile Include="vendor\include\libpng\pngset.c" />
-    <ClCompile Include="vendor\include\libpng\pngtrans.c" />
-    <ClCompile Include="vendor\include\libpng\pngwio.c" />
-    <ClCompile Include="vendor\include\libpng\pngwrite.c" />
-    <ClCompile Include="vendor\include\libpng\pngwtran.c" />
-    <ClCompile Include="vendor\include\libpng\pngwutil.c" />
-    <ClCompile Include="vendor\include\libpng\trees.c" />
-    <ClCompile Include="vendor\include\libpng\uncompr.c" />
-    <ClCompile Include="vendor\include\libpng\zutil.c" />
     <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="vendor\include\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\TestResources.h" />
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Vec2.h" />
     <ClInclude Include="src\Texture2D.h" />
-    <ClInclude Include="vendor\include\CImg.h" />
     <ClInclude Include="vendor\include\imgui\imconfig.h" />
     <ClInclude Include="vendor\include\imgui\imgui.h" />
     <ClInclude Include="vendor\include\imgui\imgui_impl_glfw.h" />
@@ -250,27 +221,10 @@
     <ClInclude Include="vendor\include\imgui\imstb_rectpack.h" />
     <ClInclude Include="vendor\include\imgui\imstb_textedit.h" />
     <ClInclude Include="vendor\include\imgui\imstb_truetype.h" />
-    <ClInclude Include="vendor\include\libpng\crc32.h" />
-    <ClInclude Include="vendor\include\libpng\deflate.h" />
-    <ClInclude Include="vendor\include\libpng\gzguts.h" />
-    <ClInclude Include="vendor\include\libpng\inffast.h" />
-    <ClInclude Include="vendor\include\libpng\inffixed.h" />
-    <ClInclude Include="vendor\include\libpng\inflate.h" />
-    <ClInclude Include="vendor\include\libpng\inftrees.h" />
-    <ClInclude Include="vendor\include\libpng\png.h" />
-    <ClInclude Include="vendor\include\libpng\pngconf.h" />
-    <ClInclude Include="vendor\include\libpng\pngdebug.h" />
-    <ClInclude Include="vendor\include\libpng\pnginfo.h" />
-    <ClInclude Include="vendor\include\libpng\pnglibconf.h" />
-    <ClInclude Include="vendor\include\libpng\pngpriv.h" />
-    <ClInclude Include="vendor\include\libpng\pngstruct.h" />
-    <ClInclude Include="vendor\include\libpng\trees.h" />
-    <ClInclude Include="vendor\include\libpng\zconf.h" />
-    <ClInclude Include="vendor\include\libpng\zlib.h" />
-    <ClInclude Include="vendor\include\libpng\zutil.h" />
     <ClInclude Include="vendor\include\stb\stb_image.h" />
     <ClInclude Include="src\Vertex.h" />
     <ClInclude Include="src\VertexBuffer.h" />
+    <ClInclude Include="vendor\include\stb_image\stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

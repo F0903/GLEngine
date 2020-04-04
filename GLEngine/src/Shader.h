@@ -9,7 +9,6 @@ enum class ShaderPartType
 	Invalid = -1,
 	Vertex = GL_VERTEX_SHADER,
 	Fragment = GL_FRAGMENT_SHADER,
-	COUNT = 3
 };
 
 struct ShaderPart
@@ -35,6 +34,7 @@ class Shader
 	ShaderPart* ParseShader(const char* path, const char* shaderPartSeparator = "@");
 
 	public:
+	Shader(Shader&& other) = default;
 	Shader(const char* path);
 	~Shader();
 
@@ -45,4 +45,5 @@ class Shader
 	void SetUniform(const char* name, float val1, float val2);
 	void SetUniform(const char* name, float val1, float val2, float val3);
 	void SetUniform(const char* name, int val);
+	void SetUniform(const char* name, unsigned int val);
 };
