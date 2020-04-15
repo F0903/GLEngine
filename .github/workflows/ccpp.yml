@@ -16,4 +16,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: compile
-      run: g++ -g $(find RootFolderName -type f -iregex ".*\.cpp")
+      run: g++ -g $(find . -type f -iregex ".*\.cpp")
