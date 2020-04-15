@@ -16,4 +16,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: compile
-      run: g++ -I ./GLEngine/vendor/include/ -g -D _GLFW_WIN32;GLEW_STATIC $(find . -type f -iregex ".*\.cpp")
+      run: g++ -I ./GLEngine/vendor/include/ -g -D _GLFW_WIN32 $(find . -type f -iregex ".*\.cpp")
