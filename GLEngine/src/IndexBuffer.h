@@ -2,13 +2,14 @@
 #include <vector>
 
 #include "Vec2.h"
+#include "IBindable.h"
 
-class IndexBuffer
+class IndexBuffer : public IBindable
 {
 	private:
 	unsigned int bufID;
 
-	std::vector<unsigned int> indecies;
+	mutable std::vector<unsigned int> indecies;
 
 	public:
 	IndexBuffer();
@@ -17,8 +18,8 @@ class IndexBuffer
 
 	inline unsigned int IndexCount() const { return indecies.size(); }
 
-	void Bind();
-	void Unbind();
+	void Bind() const override;
+	void Unbind() const override;
 
-	void GenerateFromVerticies(int numOfVertices);
+	void GenerateFromVerticies(int numOfVertices) const;
 };

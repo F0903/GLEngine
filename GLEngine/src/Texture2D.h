@@ -2,6 +2,8 @@
 #include <string>
 #include <GL/glew.h>
 
+#include "IBindable.h"
+
 enum class TextureResizeMode : int
 {
 	Linear = GL_LINEAR,
@@ -16,7 +18,7 @@ enum class TextureWrapMode : int
 	ToEdge = GL_CLAMP_TO_EDGE
 };
 
-class Texture2D
+class Texture2D : public IBindable
 {
 	private:
 	unsigned int texID = 0;
@@ -40,6 +42,6 @@ class Texture2D
 	Texture2D(const char* path, TextureResizeMode resize = TextureResizeMode::Linear, TextureWrapMode wrap = TextureWrapMode::Repeat, unsigned int slot = 0);
 	~Texture2D();
 
-	void Bind() const;
-	void Unbind() const;
+	void Bind() const override;
+	void Unbind() const override;
 };

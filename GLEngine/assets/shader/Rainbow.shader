@@ -1,8 +1,8 @@
 @vertex
 #version 460 core
 
-in vec4 position;
-in vec2 texCoord;
+in layout(location = 0) vec4 position;
+in layout(location = 1) vec2 texCoord;
 
 out vec3 vertPosition;
 out vec2 localTexCoord;

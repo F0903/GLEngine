@@ -91,7 +91,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableModules>false</EnableModules>
       <AdditionalIncludeDirectories>$(PROJ_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;cimg_use_png;_GLFW_WIN32;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -119,7 +119,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableModules>false</EnableModules>
       <AdditionalIncludeDirectories>$(PROJ_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_GLFW_WIN32;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -192,6 +192,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Program.cpp" />
@@ -204,8 +205,11 @@
     <ClCompile Include="vendor\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="vendor\include\stb_image\stb_image.cpp" />
+    <ClCompile Include="vendor\include\stb_image\stb_image_write.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\IBindable.h" />
+    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Shader.h" />
@@ -225,6 +229,7 @@
     <ClInclude Include="src\Vertex.h" />
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="vendor\include\stb_image\stb_image.h" />
+    <ClInclude Include="vendor\include\stb_image\stb_image_write.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

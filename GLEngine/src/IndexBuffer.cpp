@@ -3,14 +3,12 @@
 #include "Debug.h"
 #include <GL/glew.h>
 
-bool bound;
-
-IndexBuffer::IndexBuffer()
+IndexBuffer::IndexBuffer() : IBindable(bufID, BindableType::IndexBuffer)
 {
 	GLE_GL_DEBUG_CALL(glGenBuffers(1, &bufID));
 }
 
-IndexBuffer::IndexBuffer(const std::vector<unsigned int>& ind) : indecies(ind)
+IndexBuffer::IndexBuffer(const std::vector<unsigned int>& ind) : IBindable(bufID, BindableType::IndexBuffer), indecies(ind)
 {
 	GLE_GL_DEBUG_CALL(glGenBuffers(1, &bufID));
 	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufID));
@@ -23,7 +21,7 @@ IndexBuffer::~IndexBuffer()
 	glDeleteBuffers(1, &bufID);
 }
 
-void IndexBuffer::GenerateFromVerticies(int numOfVertices)
+void IndexBuffer::GenerateFromVerticies(int numOfVertices) const
 {
 	indecies.clear();
 	// Not sure if working.
@@ -37,21 +35,25 @@ void IndexBuffer::GenerateFromVerticies(int numOfVertices)
 		indecies.push_back(0 + i);
 	}
 
-	if (!bound)
+	//auto wasBound = IsBound();
+
+	//if (!wasBound)
 		GLE_GL_DEBUG_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufID));
 	GLE_GL_DEBUG_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indecies.size(), indecies.data(), GL_STATIC_DRAW));
-	if (!bound)
+	//if (!wasBound)
 		GLE_GL_DEBUG_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
-void IndexBuffer::Bind()
+void IndexBuffer::Bind() const
 {
+	if (IsBound()) return;
+	IBindable::Bind();
 	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufID));
-	bound = true;
 }
 
-void IndexBuffer::Unbind()
+void IndexBuffer::Unbind() const
 {
+	if (!IsBound()) return;
+	IBindable::Unbind();
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	bound = false;
 }

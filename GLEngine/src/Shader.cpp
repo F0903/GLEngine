@@ -4,8 +4,27 @@
 #include <sstream>
 #include <filesystem>
 
+#include "Utility.h"
 #include "Debug.h"
 #include "TestResources.h"
+
+ShaderStage::ShaderStage(const std::string& str) : shaderID(0)
+{
+	std::string localStr = str;
+	ToLower(localStr);
+	if (localStr == "vertex")
+	{
+		type = ShaderStageType::Vertex;
+	}
+	else if (localStr == "fragment")
+	{
+		type = ShaderStageType::Fragment;
+	}
+	else
+	{
+		type = ShaderStageType::Invalid;
+	}
+}
 
 int Shader::GetUniformLocation(const char* name)
 {
@@ -19,11 +38,17 @@ int Shader::GetUniformLocation(const char* name)
 
 void Shader::Unbind() const
 {
+	if (!IsBound())
+		return;
+	IBindable::Unbind();
 	glUseProgram(0);
 }
 
 void Shader::Bind() const
 {
+	if (IsBound())
+		return;
+	IBindable::Bind();
 	glUseProgram(programID);
 }
 
@@ -57,28 +82,28 @@ void Shader::SetUniform(const char* name, unsigned int val)
 	GLE_GL_DEBUG_CALL(glUniform1ui(uni, val));
 }
 
-unsigned int Shader::CompileShaderPart(const ShaderPart& shader)
+bool Shader::CompileShaderPart(ShaderStage& shader)
 {
-	auto id = glCreateShader((unsigned int)shader.type);
+	shader.shaderID = glCreateShader((unsigned int)shader.type);
 	const char* src[1]{ shader.source.c_str() };
-	GLE_GL_DEBUG_CALL(glShaderSource(id, 1, src, NULL));
-	GLE_GL_DEBUG_CALL(glCompileShader(id));
+	GLE_GL_DEBUG_CALL(glShaderSource(shader.shaderID, 1, src, NULL));
+	GLE_GL_DEBUG_CALL(glCompileShader(shader.shaderID));
 
 	int result;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	glGetShaderiv(shader.shaderID, GL_COMPILE_STATUS, &result);
 	if (result == GL_FALSE)
 	{
 		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		glGetShaderiv(shader.shaderID, GL_INFO_LOG_LENGTH, &length);
 		char* msg = (char*)_malloca(length);
-		glGetShaderInfoLog(id, length, &length, msg);
+		glGetShaderInfoLog(shader.shaderID, length, &length, msg);
 		std::cerr << "Failed to compile shader!\n" << "Error: " << msg;
 		_freea(msg);
-		glDeleteShader(id);
-		return 0;
+		glDeleteShader(shader.shaderID);
+		return false;
 	}
-	GLE_GL_DEBUG_CALL(glAttachShader(programID, id));
-	return id;
+	GLE_GL_DEBUG_CALL(glAttachShader(programID, shader.shaderID));
+	return true;
 }
 
 size_t GetNumOfChars(const char* str)
@@ -92,64 +117,53 @@ size_t GetNumOfChars(const char* str)
 	return num;
 }
 
-ShaderPart* Shader::ParseShader(const char* path, const char* shaderPartSeparator)
+void Shader::ParseShader(const char* path, const char* shaderStageSeparator)
 {
 	bool fallback = !std::filesystem::exists(path);
 
-	std::stringstream ss[2];
-	std::istream& fileStream = *(fallback ? dynamic_cast<std::istream*>(&std::stringstream(testShader)) : dynamic_cast<std::istream*>(&std::ifstream(path))); // May cause eye cancer
+	std::istream& shaderStream = *(fallback ? dynamic_cast<std::istream*>(&std::stringstream(testShader)) : dynamic_cast<std::istream*>(&std::ifstream(path))); // May cause eye cancer
 
-	auto numOfCharsInSep = GetNumOfChars(shaderPartSeparator);
+	auto numOfCharsInSep = GetNumOfChars(shaderStageSeparator);
 
-	ShaderPartType type = ShaderPartType::Invalid;
-	std::string line; 
-	while (std::getline(fileStream, line))
+	std::vector<ShaderStage> stages;
+	int currentStageNum = -1;
+	std::string line;
+	while (std::getline(shaderStream, line))
 	{
-		bool newShader = false;
-		for (size_t i = 0; i < numOfCharsInSep; i++)
+		bool newStage = false;
+		for (size_t i = 0; i < numOfCharsInSep + 1; i++)
 		{
-			if (line[i] != shaderPartSeparator[i])
-				continue;
+			if (line[0] != shaderStageSeparator[0])
+				break;
 
-			if (i != numOfCharsInSep - 1)
-				continue;
+			if (i == numOfCharsInSep)
+			{
+				currentStageNum++;
+				newStage = true;
 
-			newShader = true;
-			line.erase(0, numOfCharsInSep);
+				line.erase(0, numOfCharsInSep);
+				ShaderStage stage = line;
+				stages.push_back(stage);
+				continue;
+			}
 		}
-		if (newShader)
-		{
-			type = line == "vertex" ? ShaderPartType::Vertex : ShaderPartType::Fragment;
+		if (newStage)
 			continue;
-		}
 
-		switch (type)
-		{
-			case ShaderPartType::Invalid:
-				continue;
-			case ShaderPartType::Vertex:
-				ss[0] << line << '\n';
-				break;
-			case ShaderPartType::Fragment:
-				ss[1] << line << '\n';
-				break;
-			default:
-				throw "Unknown error occured during shader parsing.";
-		}
+		stages[currentStageNum].source += line + '\n';
 	}
-	if (type == ShaderPartType::Invalid)
-		std::cerr << "Shader specified is invalid.\n";
+	if (currentStageNum == -1)
+		throw "Invalid shader specified.";
 
-	Vertex.source = ss[0].str();
-	Fragment.source = ss[1].str();
-	Vertex.shaderID = CompileShaderPart(Vertex);
-	Fragment.shaderID = CompileShaderPart(Fragment);
+ 	for (auto stage : stages)
+	{
+		CompileShaderPart(stage);
+	}
+	shaderStages = stages;
 }
 
-Shader::Shader(const char* path)
+Shader::Shader(const char* path) : programID(glCreateProgram()), IBindable(programID, BindableType::Shader)
 {
-	programID = glCreateProgram();
-
 	ParseShader(path);
 
 	GLE_GL_DEBUG_CALL(glLinkProgram(programID));

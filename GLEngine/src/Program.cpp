@@ -10,9 +10,7 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "Shader.h"
+#include "Renderer.h"
 #include "Texture2D.h"
 #include "Debug.h"
 
@@ -32,10 +30,7 @@ std::vector<const char*> windowTitles = std::vector<const char*>
 	"Yeet a nibba skrr"
 };
 
-int buttonLabelIndex = 0;
-std::vector<const char*> buttonLabels = std::vector<const char*>{ "Hello", "Ok", "pls", "k bye", "stahp" };
-
-int viewport[2]{ 1000, 750 };
+int viewport[2]{ 750, 750 };
 float aspect = float(viewport[0]) / float(viewport[1]);
 
 void WindowResizeCallback(GLFWwindow* window, int width, int height)
@@ -62,10 +57,10 @@ void GLDebugCallback(GLenum source,
 			pause = true;
 			break;
 		case GL_DEBUG_SEVERITY_MEDIUM:
-			std::cerr << "OPENGL ERROR (MEDIUM): " << message << '\n';
+			std::cerr << "OPENGL WARNING (MEDIUM): " << message << '\n';
 			break;
 		case GL_DEBUG_SEVERITY_LOW:
-			std::cerr << "OPENGL ERROR (LOW): " << message << '\n';
+			std::cerr << "OPENGL WARNING (LOW): " << message << '\n';
 			break;
 		case GL_DEBUG_SEVERITY_NOTIFICATION:
 			return;
@@ -121,8 +116,8 @@ int main()
 	auto vao = VertexBuffer{
 		{{-1.0f, -1.0f}, {0.0f, 0.0f}},
 		{{1.0f, -1.0f},  {1.0f, 0.0f}},
-		{{1.0f, 1.0f},	 {1.0f, 1.0f}},
-		{{-1.0f, 1.0f},  {0.0f, 1.0f}}
+		{{1.0f, 1.0f},   {1.0f, 1.0f}},
+		{{-1.0f, 1.0f},  {0.0f, 1.0f}},
 	};
 	vao.Bind();
 	GLE_GL_DETECT_ERROR();
@@ -141,7 +136,7 @@ int main()
 	Ref<Texture2D> tex;
 	try
 	{
-		tex = Ref<Texture2D>(new Texture2D("./assets/media/cah64.png", TextureResizeMode::Nearest, TextureWrapMode::Repeat));
+		tex = Ref<Texture2D>(new Texture2D("./assets/media/cah64.png", TextureResizeMode::Linear, TextureWrapMode::Repeat));
 		tex->Bind();
 		active->SetUniform("tex", tex->GetSlot());
 		GLE_GL_DETECT_ERROR();
@@ -178,62 +173,59 @@ int main()
 		}
 		lastFrameTime = currentFrameTime;
 
-#ifdef SBOX_IMGUI
+	#ifdef SBOX_IMGUI
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-#endif // SBOX_IMGUI
+	#endif // SBOX_IMGUI
 
-		/* Render here */
+			/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		active->SetUniform("time", (float)currentFrameTime);
 		active->SetUniform("res", viewport[0], viewport[1]);
-		GLE_GL_DETECT_ERROR()
+		GLE_GL_DETECT_ERROR();
 
-			glDrawElements(GL_TRIANGLES, idb.IndexCount(), GL_UNSIGNED_INT, nullptr);
-		GLE_GL_DETECT_ERROR()
-
-#ifdef SBOX_IMGUI
-			if (ImGui::Begin("Debug Info"))
+	#ifdef SBOX_IMGUI
+		if (ImGui::Begin("Options"))
+		{
+			if (ImGui::Button("Screenshot"))
 			{
-				ImGui::Text("Yeet", "Skeet");
-				if (ImGui::Button(buttonLabels[buttonLabelIndex], ImVec2(50, 35)))
-				{
-					buttonLabelIndex = buttonLabelIndex != buttonLabels.size() - 1 ? buttonLabelIndex + 1 : 0;
-				}
-
-				ImGui::Checkbox("Rainbow", &rbowShader);
-				if (rbowShader)
-				{
-					active = &rainbow;
-					active->Bind();
-				}
-				else
-				{
-					active = &basic;
-					active->Bind();
-
-					float cols[3];
-					ImGui::ColorPicker3("Color Picker", cols);
-					active->SetUniform("col", cols[0], cols[1], cols[2]);
-				}
-
-				if (ImGui::BeginChild("FPS Info", ImVec2(preciseFrameCounter ? 165 : 165, 105), true))
-				{
-					ImGui::Text((std::string("FPS: ") + (preciseFrameCounter ? std::to_string(preciseFps) : std::to_string(roundedFps))).c_str());
-					preciseFrameCounter = ImGui::Button(preciseFrameCounter ? "Rounded" : "Precise", ImVec2(60, 25)) ? !preciseFrameCounter : preciseFrameCounter;
-					ImGui::SliderFloat("Delay", &fpsDelay, 0, 2);
-					ImGui::Checkbox("V-Sync", &vsync);
-				}
-				ImGui::EndChild();
+				Renderer::Screenshot();
 			}
+			ImGui::Checkbox("Rainbow", &rbowShader);
+			if (!rbowShader)
+			{
+				float col[4];
+				ImGui::ColorPicker4("Color Picker", col);
+				active->SetUniform("col", col[0], col[1], col[2]);
+			}
+			active = rbowShader ? &rainbow : &basic;
+			active->Bind();
+		}
 		ImGui::End();
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif // SBOX_IMGUI
 
-		/* Swap front and back buffers */
+		if (ImGui::Begin("Debug Info"))
+		{
+			if (ImGui::BeginChild("FPS Info", ImVec2(0, 0), true))
+			{
+				ImGui::Text((std::string("FPS: ") + (preciseFrameCounter ? std::to_string(preciseFps) : std::to_string(roundedFps))).c_str());
+				preciseFrameCounter = ImGui::Button(preciseFrameCounter ? "Rounded" : "Precise") ? !preciseFrameCounter : preciseFrameCounter;
+				ImGui::SliderFloat("Delay", &fpsDelay, 0, 2);
+				ImGui::Checkbox("V-Sync", &vsync);
+			}
+			ImGui::EndChild();
+		}
+		ImGui::End();
+
+		ImGui::Render();
+		Renderer::Draw(*active, idb, vao);
+		GLE_GL_DETECT_ERROR();
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	#endif // SBOX_IMGUI
+
+			/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 
 		glfwSwapInterval(vsync); //V-SYNC 

@@ -15,12 +15,12 @@ void VertexBuffer::Init()
 	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-VertexBuffer::VertexBuffer(const std::vector<Vertex>& verts) : vertices(verts)
+VertexBuffer::VertexBuffer(const std::vector<Vertex>& verts) : IBindable(bufID, BindableType::VertexBuffer), vertices(verts)
 {
 	Init();
 }
 
-VertexBuffer::VertexBuffer(std::initializer_list<Vertex> init) : vertices(init)
+VertexBuffer::VertexBuffer(std::initializer_list<Vertex> init) : IBindable(bufID, BindableType::VertexBuffer), vertices(init)
 {
 	Init();
 }
@@ -32,10 +32,14 @@ VertexBuffer::~VertexBuffer()
 
 void VertexBuffer::Bind() const
 {
+	if (IsBound()) return;
+	IBindable::Bind();
 	GLE_GL_DEBUG_CALL(glBindBuffer(GL_ARRAY_BUFFER, bufID));
 }
 
 void VertexBuffer::Unbind() const
 {
+	if (!IsBound()) return;
+	IBindable::Unbind();
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

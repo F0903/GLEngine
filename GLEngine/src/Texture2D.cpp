@@ -9,7 +9,7 @@
 #include "Utility.h"
 #include "Debug.h"
 
-Texture2D::Texture2D(const char* path, TextureResizeMode resize, TextureWrapMode wrap, unsigned int slot) : slot(slot)
+Texture2D::Texture2D(const char* path, TextureResizeMode resize, TextureWrapMode wrap, unsigned int slot) : IBindable(texID, BindableType::Texture), slot(slot)
 {	
 	this->path = std::filesystem::exists(path) ? path : throw std::exception("Path to image does not exist...");
 	name = GetFileName(path, false).c_str();
@@ -39,10 +39,14 @@ Texture2D::~Texture2D()
 
 void Texture2D::Bind() const
 {
+	if (IsBound()) return;
+	IBindable::Bind();
 	GLE_GL_DEBUG_CALL(glBindTexture(GL_TEXTURE_2D, texID));
 }
 
 void Texture2D::Unbind() const
 {
+	if (!IsBound()) return;
+	IBindable::Unbind();
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

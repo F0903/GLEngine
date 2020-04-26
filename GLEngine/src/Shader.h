@@ -4,42 +4,45 @@
 #include <string>
 #include <unordered_map>
 
-enum class ShaderPartType
+#include "IBindable.h"
+
+enum class ShaderStageType
 {
 	Invalid = -1,
 	Vertex = GL_VERTEX_SHADER,
 	Fragment = GL_FRAGMENT_SHADER,
 };
 
-struct ShaderPart
+struct ShaderStage
 {
-	const ShaderPartType type;
+	ShaderStageType type;
 	std::string source;
 	int shaderID;
+
+	ShaderStage(const std::string& str);
 };
 
-class Shader
+class Shader : public IBindable
 {
 	private:
-	int programID;
+	unsigned int programID;
 
 	std::unordered_map<const char*, unsigned int> uniformCache;
 
-	ShaderPart Vertex{ ShaderPartType::Vertex };
-	ShaderPart Fragment{ ShaderPartType::Fragment };
+	std::vector<ShaderStage> shaderStages;
 
 	int GetUniformLocation(const char* name);
 
-	unsigned int CompileShaderPart(const ShaderPart& shader);
-	ShaderPart* ParseShader(const char* path, const char* shaderPartSeparator = "@");
+	bool CompileShaderPart(ShaderStage& shader);
+	void ParseShader(const char* path, const char* shaderStageSeparator = "@");
 
 	public:
 	Shader(Shader&& other) = default;
 	Shader(const char* path);
 	~Shader();
 
-	void Unbind() const;
-	void Bind() const;
+	void Unbind() const override;
+	void Bind() const override;
 
 	void SetUniform(const char* name, float val);
 	void SetUniform(const char* name, float val1, float val2);

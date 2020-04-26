@@ -2,8 +2,9 @@
 #include <vector>
 
 #include "Vertex.h"
+#include "IBindable.h"
 
-class VertexBuffer
+class VertexBuffer : public IBindable
 {
 	private:
 	unsigned int bufID;
@@ -19,6 +20,6 @@ class VertexBuffer
 
 	inline unsigned int VertexCount() const { return vertices.size(); }
 
-	void Bind() const;
-	void Unbind() const;
+	void Bind() const override;
+	void Unbind() const override;
 };
