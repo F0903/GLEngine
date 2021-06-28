@@ -4,17 +4,14 @@ module;
 #include "util.h"
 export module Window;
 
-export using RenderFn = void(GLFWwindow* win);
-
 export class Window
 {
 private:
 	GLFWwindow* win;
-	RenderFn* render;
 	bool close;
 
 private:
-	void init(int width, int height)
+	void init(int width, int height, const char* title)
 	{
 		if (!glfwInit())
 		{
@@ -30,7 +27,7 @@ private:
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif // _MAC_OS
 
-		win = glfwCreateWindow(width, height, "Hello from GLFW!", NULL, NULL);
+		win = glfwCreateWindow(width, height, title, NULL, NULL);
 		if (!win)
 		{
 			const auto msg = "Window was null.";
@@ -41,10 +38,9 @@ private:
 	}
 
 public:
-	Window(int width, int height, RenderFn render_func)
+	Window(int width, int height, const char* title)
 	{
-		render = render_func;
-		init(width, height);
+		init(width, height, title);
 	}
 
 	~Window()
@@ -52,16 +48,25 @@ public:
 		glfwDestroyWindow(win);
 	}
 
-	const bool shouldClose() const 
+	Window WithTitle(const char* title) const
+	{
+		glfwSetWindowTitle(win, title);
+		return *this;
+	}
+
+	const bool ShouldClose() const 
 	{
 		return glfwWindowShouldClose(win);
 	}
 
-	const void poll() const
+	const void PollAndSwap() const
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		render(win);
 		glfwSwapBuffers(win);
 		glfwPollEvents();
+	}
+
+	GLFWwindow* GetRawWindow() const
+	{
+		return win;
 	}
 };

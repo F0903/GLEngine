@@ -24,9 +24,6 @@
     <ClCompile Include="src\Renderer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\OpenGL\OpenGLRenderer.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Vertex.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>

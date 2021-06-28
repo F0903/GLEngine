@@ -4,8 +4,11 @@
 
 import Window;
 import Shader;
+import Renderer;
 
-void initOpenGl()
+auto renderer = Renderer();
+
+void initOpenGl(GLFWwindow* win)
 {
 	const auto code = glewInit();
 	if (code != GLEW_OK)
@@ -13,24 +16,41 @@ void initOpenGl()
 		DEBUG_ERR("Could not init glew. Err: " << code);
 		throw "Could not init glew. Check console for error.";
 	}
-}
 
-void render(GLFWwindow* win)
-{
 	int width, height;
 	glfwGetFramebufferSize(win, &width, &height);
 	glViewport(0, 0, width, height);
+	glfwSetFramebufferSizeCallback(win, [](GLFWwindow* win, int width, int height)
+	{
+		glViewport(0, 0, width, height);
+		Renderer::UpdateViewport(width, height);
+	});
+}
+
+void checkErrors()
+{
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR)
+	{
+		DEBUG_ERR("OPENGL ERROR: " << err);
+	}
 }
 
 int main()
 {
-	const auto window = Window(500, 500, render);
+	const auto window = Window(600, 500, "OpenGL Stuff");
 
-	initOpenGl();
+	initOpenGl(window.GetRawWindow());
 
+	renderer.Init();
 	const auto shader = Shader("./resources/default.shader");
-	shader.Use();
+	renderer.SetShader(shader);
 
-	while(!window.shouldClose())
-		window.poll();
+	while (!window.ShouldClose())
+	{
+		checkErrors();
+		glClear(GL_COLOR_BUFFER_BIT);
+		renderer.DrawSquare(50, 50);
+		window.PollAndSwap();
+	}
 }

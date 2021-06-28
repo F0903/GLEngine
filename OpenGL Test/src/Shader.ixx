@@ -36,6 +36,7 @@ export class Shader
 	public:
 	Shader(const char* filePath)
 	{
+		DEBUG_LOG("Starting parse of " << filePath);
 		std::ifstream shader(filePath, std::ios::in | std::ios::binary);
 		const int len = shader.seekg(0, shader.end).tellg();
 		shader.seekg(0, shader.beg);
@@ -191,7 +192,6 @@ export class Shader
 	public:
 	static Shader FromSource(char* source)
 	{
-		DEBUG_LOG("Starting parse of " << source);
 		auto shader = Shader();
 		shader.ParseShader(source);
 		return shader;

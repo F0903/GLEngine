@@ -187,7 +187,6 @@ exit/B %errlev%</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\OpenGL\OpenGLRenderer.ixx" />
     <ClCompile Include="src\Renderer.ixx" />
     <ClCompile Include="src\Shader.ixx" />
     <ClCompile Include="src\Vertex.ixx" />
