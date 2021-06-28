@@ -66,15 +66,17 @@ export class Renderer
 		shader.Use();
 	}
 
-	void DrawSquare(float width, float height) const
+	void DrawSquare(float x, float y, float width, float height) const
 	{
+		const float normX = x / viewWidth;
+		const float normY = y / viewHeight;
 		const float normWidth = width / viewWidth;
 		const float normHeight = height / viewHeight;
 		const Vertex vertices[] = {
-			Vertex{-normWidth, normHeight, 0},
-			Vertex{normWidth, normHeight, 0},
-			Vertex{normWidth, -normHeight, 0},
-			Vertex{-normWidth, -normHeight, 0},
+			Vertex{-normWidth + normX, normHeight + normY, 0},
+			Vertex{normWidth + normX, normHeight + normY, 0},
+			Vertex{normWidth + normX, -normHeight + normY, 0},
+			Vertex{-normWidth + normX, -normHeight + normY, 0},
 		};
 		const unsigned int indices[] = {
 			0, 1, 3,

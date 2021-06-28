@@ -50,7 +50,7 @@ int main()
 	{
 		checkErrors();
 		glClear(GL_COLOR_BUFFER_BIT);
-		renderer.DrawSquare(50, 50);
+		renderer.DrawSquare(0, 0, 50, 50);
 		window.PollAndSwap();
 	}
 }
