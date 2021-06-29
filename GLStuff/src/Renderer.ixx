@@ -4,33 +4,40 @@ module;
 export module Renderer;
 import Shader;
 import Vertex;
+import Viewport;
+import RenderSize;
 
 export class Renderer
 {
 	private:
-	inline static int viewWidth, viewHeight;
+	inline static Viewport viewport;
 
 	public:
 	static void UpdateViewport(int width, int height)
 	{
-		viewWidth = width;
-		viewHeight = height;
+		viewport.width = width;
+		viewport.height = height;
+	}
+
+	static Viewport GetViewport()
+	{
+		return viewport;
 	}
 
 	void InitViewport()
 	{
 		union
 		{
-			GLint viewport[4];
+			GLint view[4];
 			struct
 			{
 				GLint a, b;
 				GLint width, height;
 			};
 		};
-		glGetIntegerv(GL_VIEWPORT, viewport);
-		viewWidth = width;
-		viewHeight = height;
+		glGetIntegerv(GL_VIEWPORT, view);
+		viewport.width = width;
+		viewport.height = height;
 	}
 
 	void InitVertexData()
@@ -62,17 +69,17 @@ export class Renderer
 		shader.Use();
 	}
 
-	void DrawSquare(float x, float y, float width, float height) const
+	void DrawSquare(float x, float y, RenderSize width, RenderSize height) const
 	{
-		const float normX = x / viewWidth;
-		const float normY = y / viewHeight;
-		const float normWidth = width / viewWidth;
-		const float normHeight = height / viewHeight;
+		const auto widthVal = width.Get(viewport, NormalizationContext::Width);
+		const auto heightVal = height.Get(viewport, NormalizationContext::Height);
+		const auto normX = x / viewport.width;
+		const auto normY = y / viewport.height;
 		const Vertex vertices[] = {
-			Vertex{-normWidth + normX, normHeight + normY, 0},
-			Vertex{normWidth + normX, normHeight + normY, 0},
-			Vertex{normWidth + normX, -normHeight + normY, 0},
-			Vertex{-normWidth + normX, -normHeight + normY, 0},
+			Vertex{-widthVal + normX, heightVal + normY, 0},
+			Vertex{widthVal + normX, heightVal + normY, 0},
+			Vertex{widthVal + normX, -heightVal + normY, 0},
+			Vertex{-widthVal + normX, -heightVal + normY, 0},
 		};
 		const unsigned int indices[] = {
 			0, 1, 3,

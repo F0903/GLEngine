@@ -5,6 +5,7 @@
 import Window;
 import Shader;
 import Renderer;
+import RenderSize;
 import Matrix;
 
 auto renderer = Renderer();
@@ -41,8 +42,7 @@ int main()
 {
 	auto t1 = Matrix<float, 3>({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
 	auto t2 = Matrix<float, 3>({ {6, 4, 5}, {3, 5, 8}, {3, 2, 3} });
-	t1.Det();
-	t1.Cross(t2);
+	//t1.Cross(t2);
 
 	const auto window = Window(600, 500, "OpenGL Stuff");
 
@@ -56,7 +56,7 @@ int main()
 	{
 		checkErrors();
 		glClear(GL_COLOR_BUFFER_BIT);
-		renderer.DrawSquare(0, 0, 50, 50);
+		renderer.DrawSquare(200, 0, 50.0_px, 50.0_px);
 		window.PollAndSwap();
 	}
 }

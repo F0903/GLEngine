@@ -6,7 +6,7 @@ module;
 #include "util.h"
 export module Shader;
 
-using HandlerFn = const void (const char* source, int* const shaderID, const int programID);
+using HandlerFn = const void(const char* source, int* const shaderID, const int programID);
 
 export class ShaderError : public std::exception
 {
@@ -38,7 +38,7 @@ export class Shader
 	{
 		DEBUG_LOG("Starting parse of " << filePath);
 		std::ifstream shader(filePath, std::ios::in | std::ios::binary);
-		const int len = shader.seekg(0, shader.end).tellg();
+		const size_t len = shader.seekg(0, shader.end).tellg();
 		shader.seekg(0, shader.beg);
 		char* source = new char[len + 1];
 		shader.read(source, len);
@@ -63,7 +63,7 @@ export class Shader
 	int shaderProgramID = -1;
 
 	private:
-	const inline bool IsDelimiter(const char* char_ptr, const int i = 0) const
+	const inline bool IsDelimiter(const char* char_ptr, const size_t i = 0) const
 	{
 		return (*(char_ptr + i) == delimiter.value[0]
 				&& *(char_ptr + i + 1) == delimiter.value[1]
@@ -156,7 +156,7 @@ export class Shader
 	const void ParseShader(char* source)
 	{
 		shaderProgramID = glCreateProgram();
-		int shaderIDs[handlerCount];
+		int shaderIDs[handlerCount]{};
 		int i = 0;
 		while (*source)
 		{

@@ -189,8 +189,10 @@ exit/B %errlev%</Command>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math\Matrix.ixx" />
     <ClCompile Include="src\Renderer.ixx" />
+    <ClCompile Include="src\RenderSize.ixx" />
     <ClCompile Include="src\Shader.ixx" />
     <ClCompile Include="src\Vertex.ixx" />
+    <ClCompile Include="src\Viewport.ixx" />
     <ClCompile Include="src\Window.ixx" />
   </ItemGroup>
   <ItemGroup>
