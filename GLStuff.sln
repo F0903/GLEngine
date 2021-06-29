@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGL Test", "OpenGL Test\OpenGL Test.vcxproj", "{DB6ECF76-E5B6-4470-A052-14AA5DEB2F41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLStuff", "GLStuff\GLStuff.vcxproj", "{DB6ECF76-E5B6-4470-A052-14AA5DEB2F41}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "GLFW\GLFW.vcxproj", "{7DF4C677-8D62-4694-ACA4-7191C65DC2A6}"
 EndProject

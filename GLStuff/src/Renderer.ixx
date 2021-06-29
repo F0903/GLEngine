@@ -7,10 +7,6 @@ import Vertex;
 
 export class Renderer
 {
-	public:
-	Renderer()
-	{}
-
 	private:
 	inline static int viewWidth, viewHeight;
 

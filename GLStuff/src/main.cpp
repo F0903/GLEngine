@@ -5,6 +5,7 @@
 import Window;
 import Shader;
 import Renderer;
+import Matrix;
 
 auto renderer = Renderer();
 
@@ -38,6 +39,11 @@ void checkErrors()
 
 int main()
 {
+	auto t1 = Matrix<float, 3>({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
+	auto t2 = Matrix<float, 3>({ {6, 4, 5}, {3, 5, 8}, {3, 2, 3} });
+	t1.Det();
+	t1.Cross(t2);
+
 	const auto window = Window(600, 500, "OpenGL Stuff");
 
 	initOpenGl(window.GetRawWindow());

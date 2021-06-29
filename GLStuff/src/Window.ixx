@@ -6,6 +6,17 @@ export module Window;
 
 export class Window
 {
+	public:
+	Window(int width, int height, const char* title)
+	{
+		init(width, height, title);
+	}
+
+	~Window()
+	{
+		glfwDestroyWindow(win);
+	}
+
 private:
 	GLFWwindow* win;
 	bool close;
@@ -38,16 +49,6 @@ private:
 	}
 
 public:
-	Window(int width, int height, const char* title)
-	{
-		init(width, height, title);
-	}
-
-	~Window()
-	{
-		glfwDestroyWindow(win);
-	}
-
 	Window WithTitle(const char* title) const
 	{
 		glfwSetWindowTitle(win, title);
