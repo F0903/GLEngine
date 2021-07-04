@@ -72,6 +72,7 @@ export class Shader
 
 	static const void HandleVertex(const char* source, int* const shaderId, const int programID)
 	{
+		DEBUG_LOG("VERTEX SHADER:\n" << source << '\n');
 		*shaderId = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(*shaderId, 1, &source, 0);
 		glCompileShader(*shaderId);
@@ -91,6 +92,7 @@ export class Shader
 
 	static const void HandleFragment(const char* source, int* const shaderId, const int programID)
 	{
+		DEBUG_LOG("FRAGMENT SHADER:\n" << source << '\n');
 		*shaderId = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(*shaderId, 1, &source, 0);
 		glCompileShader(*shaderId);
@@ -127,7 +129,6 @@ export class Shader
 		}
 		partSource[len] = '\0';
 
-		DEBUG_LOG(partSource);
 		handler.handler(partSource, shaderId, shaderProgramID);
 		delete[] partSource;
 	}

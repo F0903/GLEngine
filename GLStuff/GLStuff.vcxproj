@@ -186,12 +186,16 @@ exit/B %errlev%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\IndexBuffer.ixx" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math\Matrix.ixx" />
     <ClCompile Include="src\Renderer.ixx" />
     <ClCompile Include="src\RenderSize.ixx" />
     <ClCompile Include="src\Shader.ixx" />
+    <ClCompile Include="src\SizedPtr.ixx" />
     <ClCompile Include="src\Vertex.ixx" />
+    <ClCompile Include="src\VertexArray.ixx" />
+    <ClCompile Include="src\VertexBuffer.ixx" />
     <ClCompile Include="src\Viewport.ixx" />
     <ClCompile Include="src\Window.ixx" />
   </ItemGroup>
@@ -204,6 +208,7 @@ exit/B %errlev%</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\OpenGL\gl_util.h" />
     <ClInclude Include="src\util.h" />
   </ItemGroup>
   <ItemGroup>

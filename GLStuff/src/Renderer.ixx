@@ -1,16 +1,32 @@
 module;
 #include <Gl/glew.h>
+#include <initializer_list>
 #include "util.h"
+#include "OpenGL/gl_util.h"
 export module Renderer;
 import Shader;
 import Vertex;
 import Viewport;
 import RenderSize;
+import VertexBuffer;
+import IndexBuffer;
+import VertexArray;
 
 export class Renderer
 {
+	public:
+	Renderer()
+	{
+		DEBUG_GL_CHECK();
+		Init();
+		DEBUG_GL_CHECK();
+	}
+
 	private:
 	inline static Viewport viewport;
+	VertexBuffer vert = VertexBuffer();
+	IndexBuffer ind = IndexBuffer();
+	VertexArray arr = VertexArray();
 
 	public:
 	static void UpdateViewport(int width, int height)
@@ -24,7 +40,7 @@ export class Renderer
 		return viewport;
 	}
 
-	void InitViewport()
+	void InitViewport() const
 	{
 		union
 		{
@@ -40,28 +56,9 @@ export class Renderer
 		viewport.height = height;
 	}
 
-	void InitVertexData()
-	{
-		unsigned int vao;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-
-		unsigned int vbo;
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		unsigned int ebo;
-		glGenBuffers(1, &ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-		glEnableVertexAttribArray(0);
-	}
-
 	void Init()
 	{
 		InitViewport();
-		InitVertexData();
 	}
 
 	void SetShader(const Shader& shader)
@@ -69,24 +66,32 @@ export class Renderer
 		shader.Use();
 	}
 
-	void DrawSquare(float x, float y, RenderSize width, RenderSize height) const
+	void Draw(Vertex* vertices, unsigned int* indices) const
 	{
-		const auto widthVal = width.Get(viewport, NormalizationContext::Width);
-		const auto heightVal = height.Get(viewport, NormalizationContext::Height);
-		const auto normX = x / viewport.width;
-		const auto normY = y / viewport.height;
-		const Vertex vertices[] = {
+
+	}
+
+	void DrawSquare(float x, float y, RenderSize width, RenderSize height)
+	{
+		const float widthVal = width.Get(viewport, NormalizationContext::Width);
+		const float heightVal = height.Get(viewport, NormalizationContext::Height);
+		const float normX = x / viewport.width;
+		const float normY = y / viewport.height;
+
+		DEBUG_GL_CALL(arr.Bind());
+		DEBUG_GL_CALL(vert.SetData({
 			Vertex{-widthVal + normX, heightVal + normY, 0},
 			Vertex{widthVal + normX, heightVal + normY, 0},
 			Vertex{widthVal + normX, -heightVal + normY, 0},
 			Vertex{-widthVal + normX, -heightVal + normY, 0},
-		};
-		const unsigned int indices[] = {
+								   }));
+		vert.SetAttribute(0, { 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) });
+		DEBUG_GL_CHECK();
+		DEBUG_GL_CALL(ind.SetData({
 			0, 1, 3,
 			3, 1, 2
-		};
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
+								  }));
+
+		DEBUG_GL_CALL(glDrawElements(GL_TRIANGLES, ind.GetDataSize(), GL_UNSIGNED_INT, 0));
 	}
 };

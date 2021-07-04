@@ -1,14 +1,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "util.h"
+#include "OpenGL/gl_util.h"
 
 import Window;
 import Shader;
 import Renderer;
 import RenderSize;
 import Matrix;
-
-auto renderer = Renderer();
 
 void initOpenGl(GLFWwindow* win)
 {
@@ -29,34 +28,24 @@ void initOpenGl(GLFWwindow* win)
 	});
 }
 
-void checkErrors()
-{
-	GLenum err;
-	while ((err = glGetError()) != GL_NO_ERROR)
-	{
-		DEBUG_ERR("OPENGL ERROR: " << err);
-	}
-}
-
 int main()
 {
 	auto t1 = Matrix<float, 3>({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
 	auto t2 = Matrix<float, 3>({ {6, 4, 5}, {3, 5, 8}, {3, 2, 3} });
-	//t1.Cross(t2);
 
 	const auto window = Window(600, 500, "OpenGL Stuff");
 
 	initOpenGl(window.GetRawWindow());
 
-	renderer.Init();
+	auto renderer = Renderer();
 	const auto shader = Shader("./resources/default.shader");
 	renderer.SetShader(shader);
 
 	while (!window.ShouldClose())
 	{
-		checkErrors();
+		DEBUG_GL_CHECK();
 		glClear(GL_COLOR_BUFFER_BIT);
-		renderer.DrawSquare(200, 0, 50.0_px, 50.0_px);
+		renderer.DrawSquare(0, 0, 50.0_px, 50.0_px);
 		window.PollAndSwap();
 	}
 }
