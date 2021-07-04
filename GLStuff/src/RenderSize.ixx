@@ -36,8 +36,8 @@ export class RenderSize
 						return value / view.width;
 					case NormalizationContext::Height:
 						return value / view.height;
+					default: throw "Invalid context in RenderSize.";
 				}
-				throw "Invalid context in RenderSize.";
 			case ValueType::GenericPercentage:
 				switch (context)
 				{
@@ -45,12 +45,13 @@ export class RenderSize
 						return (value / 100 * view.width) / view.width;
 					case NormalizationContext::Height:
 						return (value / 100 * view.height) / view.height;
+					default: throw "Invalid context in RenderSize.";
 				}
-				throw "Invalid context in RenderSize.";
 			case ValueType::WidthPercentage:
 				return (value / 100 * view.width) / view.width;
 			case ValueType::HeightPercentage:
 				return (value / 100 * view.height) / view.height;
+			default: throw "Invalid value type in RenderSize.";
 		}
 		throw "Error when normalizing RenderSize.";
 	}

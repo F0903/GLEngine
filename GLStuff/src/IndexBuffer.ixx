@@ -25,7 +25,7 @@ export class IndexBuffer
 	{
 		this->indices = indices;
 		Bind();
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.ptrSize, indices.ptr, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.ptrSize * sizeof(unsigned int), indices.ptr, GL_STATIC_DRAW);
 	}
 
 	constexpr size_t GetDataSize() const

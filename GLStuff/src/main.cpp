@@ -39,7 +39,7 @@ int main()
 
 	auto renderer = Renderer();
 	const auto shader = Shader("./resources/default.shader");
-	renderer.SetShader(shader);
+	renderer.SetShader(&shader);
 
 	while (!window.ShouldClose())
 	{
