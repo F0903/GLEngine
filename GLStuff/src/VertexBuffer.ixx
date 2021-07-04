@@ -27,6 +27,6 @@ export class VertexBuffer
 	{
 		this->vertices = vertices;
 		Bind();
-		glBufferData(GL_ARRAY_BUFFER, vertices.ptrSize * sizeof(Vertex), vertices.ptr, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertices.length * sizeof(Vertex), vertices.ptr, GL_STATIC_DRAW);
 	}
 };

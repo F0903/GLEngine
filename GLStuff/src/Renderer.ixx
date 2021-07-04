@@ -28,6 +28,7 @@ export class Renderer
 	public:
 	static void UpdateViewport(int width, int height)
 	{
+		glViewport(0, 0, width, height);
 		viewport.width = width;
 		viewport.height = height;
 	}
@@ -61,40 +62,46 @@ export class Renderer
 	void SetShader(const Shader* shader)
 	{
 		this->shader = shader;
+		shader->Use();
 	}
 
-	void Draw(Vertex* vertices, unsigned int* indices) const
+	void Draw(SizedPtr<Vertex> vertices, SizedPtr<unsigned int> indices)
 	{
-
-	}
-
-	void DrawSquare(float x, float y, RenderSize width, RenderSize height)
-	{
-		const float widthVal = width.Get(viewport, NormalizationContext::Width);
-		const float heightVal = height.Get(viewport, NormalizationContext::Height);
-		const float normX = x / viewport.width;
-		const float normY = y / viewport.height;
-
 		arr.Bind();
 		auto vert = arr.GetVertexBuffer();
 		auto ind = arr.GetIndexBuffer();
 
-		vert.SetData({
-			Vertex{-widthVal + normX, heightVal + normY, 0},
-			Vertex{widthVal + normX, heightVal + normY, 0},
-			Vertex{widthVal + normX, -heightVal + normY, 0},
-			Vertex{-widthVal + normX, -heightVal + normY, 0},
-					 });
-		ind.SetData({
-			0, 1, 3,
-			3, 1, 2
-					});
+		vert.SetData(vertices);
+		ind.SetData(indices);
 		arr.SetAttribute(0, { 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) });
 		DEBUG_GL_CHECK();
 
-		shader->Use();
 		arr.Bind();
 		glDrawElements(GL_TRIANGLES, ind.GetDataSize(), GL_UNSIGNED_INT, 0);
 		DEBUG_GL_CHECK();
+	}
+
+	void DrawSquare(RenderSize x, RenderSize y, RenderSize width, RenderSize height)
+	{
+		// Use a transformation matrix instead for UI?
+		const float widthVal = width.Get(viewport, NormalizationContext::Width);
+		const float heightVal = height.Get(viewport, NormalizationContext::Height);
+		const float xPos = x.Get(viewport, NormalizationContext::Width) * (2 - widthVal * 2);
+		const float yPos = y.Get(viewport, NormalizationContext::Height) * (2 - heightVal * 2);
+		const float xOffset = 1.0f - widthVal;
+		const float yOffset = 1.0f - heightVal;
+		const float finalX = xPos - xOffset;
+		const float finalY = -1 * (yPos - yOffset);
+
+		Draw({
+			 Vertex{-widthVal + finalX, heightVal + finalY, 0},
+			 Vertex{widthVal + finalX, heightVal + finalY, 0},
+			 Vertex{widthVal + finalX, -heightVal + finalY, 0},
+			 Vertex{-widthVal + finalX, -heightVal + finalY, 0},
+			 },
+			 {
+				0, 1, 3,
+				3, 1, 2
+			 });
 	}
 };

@@ -216,6 +216,9 @@ exit/B %errlev%</Command>
       <DeploymentContent>false</DeploymentContent>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\red.shader" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

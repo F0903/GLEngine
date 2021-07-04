@@ -23,7 +23,6 @@ void initOpenGl(GLFWwindow* win)
 	glViewport(0, 0, width, height);
 	glfwSetFramebufferSizeCallback(win, [](GLFWwindow* win, int width, int height)
 	{
-		glViewport(0, 0, width, height);
 		Renderer::UpdateViewport(width, height);
 	});
 }
@@ -38,14 +37,20 @@ int main()
 	initOpenGl(window.GetRawWindow());
 
 	auto renderer = Renderer();
-	const auto shader = Shader("./resources/default.shader");
-	renderer.SetShader(&shader);
+
+	const auto defaultShader = Shader("./resources/default.shader");
+	const auto redShader = Shader("./resources/red.shader");
 
 	while (!window.ShouldClose())
 	{
 		DEBUG_GL_CHECK();
 		glClear(GL_COLOR_BUFFER_BIT);
-		renderer.DrawSquare(0, 0, 50.0_px, 50.0_px);
+		renderer.SetShader(&defaultShader);
+		renderer.DrawSquare(0.0_px, 0.0_px, 50.0_px, 50.0_px);
+		renderer.SetShader(&redShader);
+		renderer.DrawSquare(50.0_vw, 50.0_vh, 50.0_px, 50.0_px);
+		renderer.SetShader(&defaultShader);
+		renderer.DrawSquare(100.0_vw, 100.0_vh, 50.0_px, 50.0_px);
 		window.PollAndSwap();
 	}
 }
