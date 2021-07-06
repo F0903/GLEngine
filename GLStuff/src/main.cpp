@@ -42,6 +42,11 @@ int main()
 	const auto redShader = Shader("./resources/red.shader");
 
 	auto script = ScriptEngine();
+	script.ExposeFn({ "TestFunc", [](LuaState* state) -> int
+	{
+		std::cout << "Hello from test func!";
+		return 0;
+	} });
 	script.Run("./resources/Test.lua");
 
 	while (!window.ShouldClose())
