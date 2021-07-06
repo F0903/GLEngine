@@ -3,6 +3,8 @@
 #include "util.h"
 #include "OpenGL/gl_util.h"
 
+//TODO: Convert solution to use CMake when VS and CMake gets proper interop with C++20 modules.
+
 import Window;
 import Shader;
 import Renderer;

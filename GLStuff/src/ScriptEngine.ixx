@@ -1,5 +1,5 @@
 module;
-#include <lua.hpp>
+#include "lua/lua.hpp"
 export module ScriptEngine;
 
 export class ScriptEngine
