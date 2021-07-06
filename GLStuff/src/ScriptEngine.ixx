@@ -1,5 +1,5 @@
 module;
-#include <lua.hpp>
+#include "lua/lua.hpp"
 export module ScriptEngine;
 
 export class ScriptEngine
@@ -25,13 +25,13 @@ export class ScriptEngine
 		luaL_openlibs(lua);
 	}
 
-	void Close()
+	void Close() const
 	{
 		lua_close(lua);
 	}
 
 	public:
-	void Run(const char* file)
+	void Run(const char* file) const
 	{
 		if (luaL_loadfile(lua, file) || lua_pcall(lua, 0, 0, 0))
 			throw "Could not file";
