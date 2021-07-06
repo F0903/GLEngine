@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{db6ecf76-e5b6-4470-a052-14aa5deb2f41}</ProjectGuid>
-    <RootNamespace>GLStuff</RootNamespace>
+    <ProjectGuid>{2ab75b0c-eece-4ebc-a78e-4a1caada695a}</ProjectGuid>
+    <RootNamespace>Lua</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>GLStuff</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,8 +78,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\out\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)\obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,24 +86,20 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lua\src\;$(SolutionDir)GLFW\include\;$(SolutionDir)GLEW\include\</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>set/A errlev="%ERRORLEVEL% &amp; 24"
-robocopy "$(ProjectDir)resources"  "$(OutputPath)resources" /mir
-exit/B %errlev%</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copy resources</Message>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(ProjectDir)src/
+msvcbuild.bat static</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Bulding with bat file.</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -114,49 +107,41 @@ exit/B %errlev%</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lua\src\;$(SolutionDir)GLFW\include\;$(SolutionDir)GLEW\include\</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>set/A errlev="%ERRORLEVEL% &amp; 24"
-robocopy "$(ProjectDir)resources"  "$(OutputPath)resources" /mir
-exit/B %errlev%</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copy resources</Message>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(ProjectDir)src/
+msvcbuild.bat static</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Bulding with bat file.</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lua\src\;$(SolutionDir)GLFW\include\;$(SolutionDir)GLEW\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>set/A errlev="%ERRORLEVEL% &amp; 24"
-robocopy "$(ProjectDir)resources"  "$(OutputPath)resources" /mir
-exit/B %errlev%</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copy resources</Message>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(ProjectDir)src/
+msvcbuild.bat static</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Bulding with bat file.</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -164,66 +149,23 @@ exit/B %errlev%</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lua\src\;$(SolutionDir)GLFW\include\;$(SolutionDir)GLEW\include\</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>set/A errlev="%ERRORLEVEL% &amp; 24"
-robocopy "$(ProjectDir)resources"  "$(OutputPath)resources" /mir
-exit/B %errlev%</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copy resources</Message>
-    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(ProjectDir)src/
+msvcbuild.bat static</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Bulding with bat file.</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\IndexBuffer.ixx" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Math\Matrix.ixx" />
-    <ClCompile Include="src\Renderer.ixx" />
-    <ClCompile Include="src\RenderSize.ixx" />
-    <ClCompile Include="src\ScriptEngine.ixx" />
-    <ClCompile Include="src\Shader.ixx" />
-    <ClCompile Include="src\SizedPtr.ixx" />
-    <ClCompile Include="src\Vertex.ixx" />
-    <ClCompile Include="src\VertexArray.ixx" />
-    <ClCompile Include="src\VertexBuffer.ixx" />
-    <ClCompile Include="src\Viewport.ixx" />
-    <ClCompile Include="src\Window.ixx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GLEW\GLEW.vcxproj">
-      <Project>{6a06a166-d345-447d-b9fc-5f181c77019e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GLFW\GLFW.vcxproj">
-      <Project>{7df4c677-8d62-4694-aca4-7191c65dc2a6}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Lua\Lua.vcxproj">
-      <Project>{2ab75b0c-eece-4ebc-a78e-4a1caada695a}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\OpenGL\gl_util.h" />
-    <ClInclude Include="src\util.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="resources\default.shader">
-      <DeploymentContent>false</DeploymentContent>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\red.shader" />
-    <None Include="resources\Test.lua" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

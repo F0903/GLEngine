@@ -8,6 +8,7 @@ import Shader;
 import Renderer;
 import RenderSize;
 import Matrix;
+import ScriptEngine;
 
 void initOpenGl(GLFWwindow* win)
 {
@@ -29,9 +30,6 @@ void initOpenGl(GLFWwindow* win)
 
 int main()
 {
-	auto t1 = Matrix<float, 3>({ {1, 2, 3}, {4, 5, 6}, {7, 8, 9} });
-	auto t2 = Matrix<float, 3>({ {6, 4, 5}, {3, 5, 8}, {3, 2, 3} });
-
 	const auto window = Window(600, 500, "OpenGL Stuff");
 
 	initOpenGl(window.GetRawWindow());
@@ -40,6 +38,9 @@ int main()
 
 	const auto defaultShader = Shader("./resources/default.shader");
 	const auto redShader = Shader("./resources/red.shader");
+
+	auto script = ScriptEngine();
+	script.Run("./resources/Test.lua");
 
 	while (!window.ShouldClose())
 	{
