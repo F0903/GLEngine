@@ -13,32 +13,18 @@ import VertexArray;
 export class Renderer
 {
 	public:
-	Renderer()
+	~Renderer()
 	{
-		DEBUG_GL_CHECK();
-		Init();
-		DEBUG_GL_CHECK();
+		delete vertexArray;
 	}
 
 	private:
-	inline static Viewport viewport;
-	VertexArray arr = VertexArray();
-	const Shader* shader = nullptr;
+	static inline Viewport viewport;
+	static inline const Shader* currentShader = nullptr;
+	static inline VertexArray* vertexArray = nullptr;
 
-	public:
-	static void UpdateViewport(int width, int height)
-	{
-		glViewport(0, 0, width, height);
-		viewport.width = width;
-		viewport.height = height;
-	}
-
-	static Viewport GetViewport()
-	{
-		return viewport;
-	}
-
-	void InitViewport() const
+	private:
+	static void InitViewport()
 	{
 		union
 		{
@@ -54,34 +40,49 @@ export class Renderer
 		viewport.height = height;
 	}
 
-	void Init()
+	public:
+	static void Init()
 	{
+		vertexArray = new VertexArray();
 		InitViewport();
 	}
 
-	void SetShader(const Shader* shader)
+	static void UpdateViewport(int width, int height)
 	{
-		this->shader = shader;
-		shader->Use();
+		glViewport(0, 0, width, height);
+		viewport.width = width;
+		viewport.height = height;
 	}
 
-	void Draw(SizedPtr<Vertex> vertices, SizedPtr<unsigned int> indices)
+	static Viewport GetViewport()
 	{
-		arr.Bind();
-		auto vert = arr.GetVertexBuffer();
-		auto ind = arr.GetIndexBuffer();
+		return viewport;
+	}
+
+	static void SetShader(const Shader* shader)
+	{
+		currentShader = shader;
+		currentShader->Use();
+	}
+
+	static void Draw(const SizedPtr<Vertex> vertices, const SizedPtr<unsigned int> indices)
+	{
+		vertexArray->Bind();
+		auto& vert = vertexArray->GetVertexBuffer();
+		auto& ind = vertexArray->GetIndexBuffer();
 
 		vert.SetData(vertices);
 		ind.SetData(indices);
-		arr.SetAttribute(0, { 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) });
+		vertexArray->SetAttribute(0, { 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) });
 		DEBUG_GL_CHECK();
 
-		arr.Bind();
+		//TODO: Debug
+		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, ind.GetDataSize(), GL_UNSIGNED_INT, 0);
 		DEBUG_GL_CHECK();
 	}
 
-	void DrawSquare(RenderSize x, RenderSize y, RenderSize width, RenderSize height)
+	static void DrawSquare(RenderSize x, RenderSize y, RenderSize width, RenderSize height)
 	{
 		// Use a transformation matrix instead for UI?
 		const float widthVal = width.Get(viewport, NormalizationContext::Width);
@@ -94,10 +95,10 @@ export class Renderer
 		const float finalY = -1 * (yPos - yOffset);
 
 		Draw({
-			 Vertex{-widthVal + finalX, heightVal + finalY, 0},
-			 Vertex{widthVal + finalX, heightVal + finalY, 0},
-			 Vertex{widthVal + finalX, -heightVal + finalY, 0},
-			 Vertex{-widthVal + finalX, -heightVal + finalY, 0},
+				Vertex{-widthVal + finalX, heightVal + finalY, 0},
+				Vertex{widthVal + finalX, heightVal + finalY, 0},
+				Vertex{widthVal + finalX, -heightVal + finalY, 0},
+				Vertex{-widthVal + finalX, -heightVal + finalY, 0},
 			 },
 			 {
 				0, 1, 3,

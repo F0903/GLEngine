@@ -1,2 +1,2 @@
-print("Hello from Lua!!!!!")
-TestFunc()
+print("Hello from Lua!!!!!");
+DrawSquare(50, 50, 50, 50);

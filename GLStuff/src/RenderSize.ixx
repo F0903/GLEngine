@@ -57,6 +57,11 @@ export class RenderSize
 	}
 
 	public:
+	static RenderSize Pixels(float pix)
+	{
+		return RenderSize(pix, ValueType::Pixels);
+	}
+
 	float Get(Viewport view, NormalizationContext context)
 	{
 		return Normalize(view, context);

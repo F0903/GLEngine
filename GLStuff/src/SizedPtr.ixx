@@ -11,7 +11,7 @@ struct SizedPtr
 	const T* ptr;
 	size_t length;
 
-	T& operator[](size_t i)
+	T& operator[](size_t i) const
 	{
 		return ptr + i;
 	}

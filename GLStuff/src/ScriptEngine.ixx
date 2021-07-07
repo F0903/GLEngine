@@ -1,4 +1,5 @@
 module;
+#include <format>
 #include "lua/lua.hpp"
 export module ScriptEngine;
 
@@ -17,6 +18,11 @@ export struct LuaLib
 	const char* name;
 	LuaLibArray lib;
 };
+
+export int GetNumber(LuaState* lua, int argIndex)
+{
+	return luaL_checknumber(lua, argIndex);
+}
 
 export class ScriptEngine
 {
@@ -50,7 +56,7 @@ export class ScriptEngine
 	void Run(const char* file) const
 	{
 		if (luaL_loadfile(lua, file) || lua_pcall(lua, 0, 0, 0))
-			throw "Could not file";
+			throw "Could not run file.";
 	}
 
 	void ExposeFn(LuaFn fn) const

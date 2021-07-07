@@ -36,15 +36,20 @@ int main()
 
 	initOpenGl(window.GetRawWindow());
 
-	auto renderer = Renderer();
-
 	const auto defaultShader = Shader("./resources/default.shader");
 	const auto redShader = Shader("./resources/red.shader");
 
+	Renderer::Init();
+
 	auto script = ScriptEngine();
-	script.ExposeFn({ "TestFunc", [](LuaState* state) -> int
+	script.ExposeFn({ "DrawSquare", [](LuaState* state) -> int
 	{
-		std::cout << "Hello from test func!";
+		//TODO: Expand with more options like percentages.
+		const auto x = GetNumber(state, 1);
+		const auto y = GetNumber(state, 2);
+		const auto width = GetNumber(state, 3);
+		const auto height = GetNumber(state, 4);
+		Renderer::DrawSquare(RenderSize::Pixels(x), RenderSize::Pixels(y), RenderSize::Pixels(width), RenderSize::Pixels(height));
 		return 0;
 	} });
 	script.Run("./resources/Test.lua");
@@ -53,12 +58,12 @@ int main()
 	{
 		DEBUG_GL_CHECK();
 		glClear(GL_COLOR_BUFFER_BIT);
-		renderer.SetShader(&defaultShader);
-		renderer.DrawSquare(0.0_px, 0.0_px, 50.0_px, 50.0_px);
-		renderer.SetShader(&redShader);
-		renderer.DrawSquare(50.0_vw, 50.0_vh, 50.0_px, 50.0_px);
-		renderer.SetShader(&defaultShader);
-		renderer.DrawSquare(100.0_vw, 100.0_vh, 50.0_px, 50.0_px);
+		Renderer::SetShader(&defaultShader);
+		Renderer::DrawSquare(0.0_px, 0.0_px, 50.0_px, 50.0_px);
+		Renderer::SetShader(&redShader);
+		Renderer::DrawSquare(50.0_vw, 50.0_vh, 50.0_px, 50.0_px);
+		Renderer::SetShader(&defaultShader);
+		Renderer::DrawSquare(100.0_vw, 100.0_vh, 50.0_px, 50.0_px);
 		window.PollAndSwap();
 	}
 }
