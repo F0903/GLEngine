@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <vector>
 #include "lua/lua.hpp"
 export module ScriptEngine;
 
@@ -24,6 +25,11 @@ export int GetNumber(LuaState* lua, int argIndex)
 	return luaL_checknumber(lua, argIndex);
 }
 
+export void PushBoolean(LuaState* lua, bool value)
+{
+	lua_pushboolean(lua, value);
+}
+
 export class ScriptEngine
 {
 	public:
@@ -39,12 +45,23 @@ export class ScriptEngine
 
 	private:
 	LuaState* lua;
+	std::vector<void(*)()> beforeUpdate;
+	std::vector<void(*)()> afterUpdate;
 
 	private:
 	void Initialize()
 	{
 		lua = lua_open();
 		luaL_openlibs(lua);
+	}
+
+	void PushUpdateFunc() const
+	{
+		lua_getglobal(lua, "Update");
+		if (!lua_isfunction(lua, 1))
+		{
+			throw "Update was not a function.";
+		}
 	}
 
 	void Close() const
@@ -55,13 +72,37 @@ export class ScriptEngine
 	public:
 	void Run(const char* file) const
 	{
-		if (luaL_loadfile(lua, file) || lua_pcall(lua, 0, 0, 0))
-			throw "Could not run file.";
+		luaL_dofile(lua, file);
+		PushUpdateFunc();
+	}
+
+	void Update() const
+	{
+		for (const auto f : beforeUpdate)
+			f();
+
+		if (lua_pcall(lua, 0, 0, 0) != 0) //TODO: Will except if called more than once.
+		{
+			throw "Error running update";
+		}
+
+		for (const auto f : afterUpdate)
+			f();
 	}
 
 	void ExposeFn(LuaFn fn) const
 	{
 		lua_pushcfunction(lua, fn.func);
 		lua_setglobal(lua, fn.name);
+	}
+
+	void OnBeforeUpdate(void(*fn)())
+	{
+		beforeUpdate.push_back(fn);
+	}
+
+	void OnAfterUpdate(void(*fn)())
+	{
+		afterUpdate.push_back(fn);
 	}
 };

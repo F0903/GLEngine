@@ -40,6 +40,7 @@ int main()
 	const auto redShader = Shader("./resources/red.shader");
 
 	Renderer::Init();
+	Renderer::SetShader(&defaultShader);
 
 	auto script = ScriptEngine();
 	script.ExposeFn({ "DrawSquare", [](LuaState* state) -> int
@@ -56,6 +57,14 @@ int main()
 
 	while (!window.ShouldClose())
 	{
+		glClear(GL_COLOR_BUFFER_BIT);
+		script.Update();
+		window.PollAndSwap();
+	}
+
+	/*
+	while (!window.ShouldClose())
+	{
 		DEBUG_GL_CHECK();
 		glClear(GL_COLOR_BUFFER_BIT);
 		Renderer::SetShader(&defaultShader);
@@ -66,4 +75,5 @@ int main()
 		Renderer::DrawSquare(100.0_vw, 100.0_vh, 50.0_px, 50.0_px);
 		window.PollAndSwap();
 	}
+	*/
 }
