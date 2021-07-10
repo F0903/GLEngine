@@ -1,5 +1,6 @@
 export module RenderSize;
 import Viewport;
+import ScriptEngine;
 
 export enum class NormalizationContext
 {
@@ -60,6 +61,11 @@ export class RenderSize
 	static RenderSize Pixels(float pix)
 	{
 		return RenderSize(pix, ValueType::Pixels);
+	}
+
+	static RenderSize FromPctOrNum(PctOrNum value)
+	{
+		return RenderSize(value.value, value.isPct ? ValueType::GenericPercentage : ValueType::Pixels);
 	}
 
 	float Get(Viewport view, NormalizationContext context)

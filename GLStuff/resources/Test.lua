@@ -1,6 +1,5 @@
-print("Hello from lua.");
+SetTexture("./resources/cah.png");
 
 function Update()
-	print("Update");
-	DrawSquare(50, 50, 50, 50);
+	DrawSquare(0, 0, "100%", "100%");
 end

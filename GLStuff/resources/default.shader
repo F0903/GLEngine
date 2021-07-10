@@ -1,17 +1,25 @@
 //#VERTEX
 #version 330 core
-layout(location = 0) in vec3 vertPos;
+layout(location = 0) in vec3 _vertPos;
+layout(location = 1) in vec2 _texCoord;
+
+out vec2 texCoord;
 
 void main()
 {
-	gl_Position = vec4(vertPos.x, vertPos.y, vertPos.z, 1.0);
+	gl_Position = vec4(_vertPos.x, _vertPos.y, _vertPos.z, 1.0);
+	texCoord = _texCoord;
 }
 
 //#FRAGMENT
 #version 330 core
 out vec4 fragColor;
 
+in vec2 texCoord;
+
+uniform sampler2D tex;
+
 void main()
 {
-	fragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+	fragColor = texture(tex, texCoord) * vec4(0.0f, 0.56f, 0.15f, 1.0f);
 }

@@ -190,14 +190,17 @@ exit/B %errlev%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="deps\stb_image\stb_image.cpp" />
     <ClCompile Include="src\IndexBuffer.ixx" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math\Matrix.ixx" />
+    <ClCompile Include="src\Optional.ixx" />
     <ClCompile Include="src\Renderer.ixx" />
     <ClCompile Include="src\RenderSize.ixx" />
     <ClCompile Include="src\ScriptEngine.ixx" />
     <ClCompile Include="src\Shader.ixx" />
     <ClCompile Include="src\SizedPtr.ixx" />
+    <ClCompile Include="src\Texture.ixx" />
     <ClCompile Include="src\Vertex.ixx" />
     <ClCompile Include="src\VertexArray.ixx" />
     <ClCompile Include="src\VertexBuffer.ixx" />
@@ -213,6 +216,7 @@ exit/B %errlev%</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="deps\stb_image\stb_image.h" />
     <ClInclude Include="src\OpenGL\gl_util.h" />
     <ClInclude Include="src\util.h" />
   </ItemGroup>

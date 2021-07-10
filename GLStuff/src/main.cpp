@@ -11,6 +11,7 @@ import Renderer;
 import RenderSize;
 import Matrix;
 import ScriptEngine;
+import Texture;
 
 void initOpenGl(GLFWwindow* win)
 {
@@ -36,23 +37,33 @@ int main()
 
 	initOpenGl(window.GetRawWindow());
 
-	const auto defaultShader = Shader("./resources/default.shader");
-	const auto redShader = Shader("./resources/red.shader");
+	auto defaultShader = Shader("./resources/default.shader");
 
 	Renderer::Init();
 	Renderer::SetShader(&defaultShader);
 
 	auto script = ScriptEngine();
-	script.ExposeFn({ "DrawSquare", [](LuaState* state) -> int
+
+	script.ExposeFn({ "SetTexture", [](LuaState* state) -> int
 	{
-		//TODO: Expand with more options like percentages.
-		const auto x = GetNumber(state, 1);
-		const auto y = GetNumber(state, 2);
-		const auto width = GetNumber(state, 3);
-		const auto height = GetNumber(state, 4);
-		Renderer::DrawSquare(RenderSize::Pixels(x), RenderSize::Pixels(y), RenderSize::Pixels(width), RenderSize::Pixels(height));
+		const auto path = GetString(state, 1);
+		auto tex = new Texture(path);
+		tex->SetWrapMode(TextureWrap::BorderClamp);
+		tex->SetFilteringMode(TextureFiltering::Nearest, nullptr);
+		Renderer::SetTexture({ tex, true });
 		return 0;
 	} });
+
+	script.ExposeFn({ "DrawSquare", [](LuaState* state) -> int
+	{
+		const auto x = GetPctOrNum(state, 1);
+		const auto y = GetPctOrNum(state, 2);
+		const auto width = GetPctOrNum(state, 3);
+		const auto height = GetPctOrNum(state, 4);
+		Renderer::DrawSquare(RenderSize::FromPctOrNum(x), RenderSize::FromPctOrNum(y), RenderSize::FromPctOrNum(width), RenderSize::FromPctOrNum(height));
+		return 0;
+	} });
+
 	script.Run("./resources/Test.lua");
 
 	while (!window.ShouldClose())
@@ -61,19 +72,5 @@ int main()
 		script.Update();
 		window.PollAndSwap();
 	}
-
-	/*
-	while (!window.ShouldClose())
-	{
-		DEBUG_GL_CHECK();
-		glClear(GL_COLOR_BUFFER_BIT);
-		Renderer::SetShader(&defaultShader);
-		Renderer::DrawSquare(0.0_px, 0.0_px, 50.0_px, 50.0_px);
-		Renderer::SetShader(&redShader);
-		Renderer::DrawSquare(50.0_vw, 50.0_vh, 50.0_px, 50.0_px);
-		Renderer::SetShader(&defaultShader);
-		Renderer::DrawSquare(100.0_vw, 100.0_vh, 50.0_px, 50.0_px);
-		window.PollAndSwap();
-	}
-	*/
+	Renderer::Free();
 }

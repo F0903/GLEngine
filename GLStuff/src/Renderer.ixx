@@ -5,23 +5,37 @@ module;
 #include "OpenGL/gl_util.h"
 export module Renderer;
 import Shader;
+import Texture;
 import Vertex;
 import Viewport;
 import RenderSize;
 import VertexArray;
 
+export template <class T>
+struct RendererPtr
+{
+	RendererPtr(T* ptr, bool heapAlloc) : ptr(ptr), heapAlloc(heapAlloc)
+	{}
+
+	RendererPtr(T* ptr) : ptr(ptr), heapAlloc(false)
+	{}
+
+	bool heapAlloc;
+	T* ptr;
+
+	T* operator->()
+	{
+		return ptr;
+	}
+};
+
 export class Renderer
 {
-	public:
-	~Renderer()
-	{
-		delete vertexArray;
-	}
-
 	private:
 	static inline Viewport viewport;
-	static inline const Shader* currentShader = nullptr;
-	static inline VertexArray* vertexArray = nullptr;
+	static inline RendererPtr<Shader> currentShader = nullptr;
+	static inline RendererPtr<Texture> currentTexture = nullptr;
+	static inline VertexArray* vertexArray;
 
 	private:
 	static void InitViewport()
@@ -47,6 +61,13 @@ export class Renderer
 		InitViewport();
 	}
 
+	static void Free()
+	{
+		if (currentShader.heapAlloc) delete currentShader.ptr;
+		if (currentTexture.heapAlloc) delete currentTexture.ptr;
+		delete vertexArray;
+	}
+
 	static void UpdateViewport(int width, int height)
 	{
 		glViewport(0, 0, width, height);
@@ -59,10 +80,17 @@ export class Renderer
 		return viewport;
 	}
 
-	static void SetShader(const Shader* shader)
+	static void SetShader(RendererPtr<Shader> shader)
 	{
 		currentShader = shader;
 		currentShader->Use();
+	}
+
+	static void SetTexture(RendererPtr<Texture> tex)
+	{
+		currentTexture = tex;
+		currentTexture->Bind();
+		currentTexture->Free();
 	}
 
 	static void Draw(const SizedPtr<Vertex> vertices, const SizedPtr<unsigned int> indices)
@@ -73,10 +101,12 @@ export class Renderer
 
 		vert.SetData(vertices);
 		ind.SetData(indices);
-		vertexArray->SetAttribute(0, { 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) });
+		vertexArray->SetAttribute(0, { 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0 }); // Position
+		vertexArray->SetAttribute(1, { 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, texCoords) }); // Texture coords
 		DEBUG_GL_CHECK();
 
-		//TODO: Debug
+		currentTexture->Bind();
+		currentShader->Use();
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, ind.GetDataSize(), GL_UNSIGNED_INT, 0);
 		DEBUG_GL_CHECK();
@@ -95,10 +125,10 @@ export class Renderer
 		const float finalY = -1 * (yPos - yOffset);
 
 		Draw({
-				Vertex{-widthVal + finalX, heightVal + finalY, 0},
-				Vertex{widthVal + finalX, heightVal + finalY, 0},
-				Vertex{widthVal + finalX, -heightVal + finalY, 0},
-				Vertex{-widthVal + finalX, -heightVal + finalY, 0},
+				Vertex{-widthVal + finalX, heightVal + finalY, 0, {0, 1.0}},
+				Vertex{widthVal + finalX, heightVal + finalY, 0, {1.0, 1.0}},
+				Vertex{widthVal + finalX, -heightVal + finalY, 0, {1.0, 0}},
+				Vertex{-widthVal + finalX, -heightVal + finalY, 0, {0, 0}},
 			 },
 			 {
 				0, 1, 3,

@@ -30,6 +30,9 @@ struct ShaderHandler
 
 export class Shader
 {
+	public:
+	Shader(Shader&&) = default;
+
 	private:
 	Shader() = default;
 

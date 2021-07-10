@@ -20,9 +20,59 @@ export struct LuaLib
 	LuaLibArray lib;
 };
 
+export struct PctOrNum
+{
+	const float value;
+	const bool isPct;
+};
+
+char pow(int num, int pow)
+{
+	char total = num;
+	for (size_t i = 0; i < pow; i++)
+		total *= total;
+	return total;
+}
+
+export const char* GetString(LuaState* lua, int argIndex)
+{
+	return luaL_checkstring(lua, argIndex);
+}
+
+export float GetPercentage(LuaState* lua, int argIndex)
+{
+	const char* str = GetString(lua, argIndex);
+	int len = 0;
+	char total = 0;
+	while (*str)
+	{
+		++len;
+		++str;
+	}
+	if (*(str - 1) != '%')
+		return -1;
+	for (size_t i = 0; i < len - 1; i++)
+	{
+		const char ch = *(str - i - 2);
+		const char num = ch - 48;
+		const char step = pow(10, i);
+		const char a = num * step;
+		total += a;
+	}
+	return total;
+}
+
 export int GetNumber(LuaState* lua, int argIndex)
 {
 	return luaL_checknumber(lua, argIndex);
+}
+
+export PctOrNum GetPctOrNum(LuaState* lua, int argIndex)
+{
+	float val;
+	if ((val = GetPercentage(lua, argIndex)) > 0)
+		return { val, true };
+	return { (float)GetNumber(lua, argIndex), false };
 }
 
 export void PushBoolean(LuaState* lua, bool value)
@@ -73,11 +123,11 @@ export class ScriptEngine
 	void Run(const char* file) const
 	{
 		luaL_dofile(lua, file);
-		PushUpdateFunc();
 	}
 
 	void Update() const
 	{
+		PushUpdateFunc();
 		for (const auto f : beforeUpdate)
 			f();
 

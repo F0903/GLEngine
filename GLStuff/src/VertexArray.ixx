@@ -11,6 +11,7 @@ export struct VertexAttribute
 	GLenum dataMemberType;
 	GLboolean normalized;
 	int stride;
+	int offset;
 };
 
 export class VertexArray
@@ -35,7 +36,7 @@ export class VertexArray
 	void SetAttribute(const unsigned int num, const VertexAttribute attribute) const
 	{
 		DEBUG_GL_CHECK();
-		glVertexAttribPointer(num, attribute.dataMembers, attribute.dataMemberType, attribute.normalized, attribute.stride, 0);
+		glVertexAttribPointer(num, attribute.dataMembers, attribute.dataMemberType, attribute.normalized, attribute.stride, (void*)attribute.offset);
 		glEnableVertexAttribArray(num);
 		DEBUG_GL_CHECK();
 	}
