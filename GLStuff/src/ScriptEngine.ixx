@@ -26,9 +26,9 @@ export struct PctOrNum
 	const bool isPct;
 };
 
-char pow(int num, int pow)
+int pow(int num, int pow)
 {
-	char total = num;
+	int total = num;
 	for (size_t i = 0; i < pow; i++)
 		total *= total;
 	return total;
@@ -43,7 +43,7 @@ export float GetPercentage(LuaState* lua, int argIndex)
 {
 	const char* str = GetString(lua, argIndex);
 	int len = 0;
-	char total = 0;
+	int total = 0;
 	while (*str)
 	{
 		++len;
@@ -54,9 +54,9 @@ export float GetPercentage(LuaState* lua, int argIndex)
 	for (size_t i = 0; i < len - 1; i++)
 	{
 		const char ch = *(str - i - 2);
-		const char num = ch - 48;
-		const char step = pow(10, i);
-		const char a = num * step;
+		const int num = ch - 48;
+		const int step = pow(10, i);
+		const int a = num * step;
 		total += a;
 	}
 	return total;
