@@ -8,6 +8,24 @@ export module Shader;
 
 using HandlerFn = const void(const char* source, int* const shaderID, const int programID);
 
+struct Uniform
+{
+	Uniform(const int& location) : location(location), isLocation(true)
+	{}
+
+	Uniform(const char* name) : name(name), location{}, isLocation(false)
+	{}
+
+	const bool isLocation;
+	const int& location;
+	const char* name;
+
+	int GetLocation(const int programId) const
+	{
+		return isLocation ? location : glGetUniformLocation(programId, name);
+	}
+};
+
 export class ShaderError : public std::exception
 {
 	private:
@@ -206,5 +224,26 @@ export class Shader
 		if (shaderProgramID == -1)
 			throw ShaderError("Shader program was -1. This means the program could not link or create properly.");
 		glUseProgram(shaderProgramID);
+	}
+
+	const void SetUniformInt(Uniform uniform, int value) const
+	{
+		Use();
+		int location = uniform.GetLocation(shaderProgramID);
+		glUniform1i(location, value);
+	}
+
+	const void SetUniformFloat(Uniform uniform, float value) const
+	{
+		Use();
+		int location = uniform.GetLocation(shaderProgramID);
+		glUniform1f(location, value);
+	}
+
+	const void SetUniformDouble(Uniform uniform, double value) const
+	{
+		Use();
+		int location = uniform.GetLocation(shaderProgramID);
+		glUniform1d(location, value);
 	}
 };

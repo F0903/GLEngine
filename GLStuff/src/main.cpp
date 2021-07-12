@@ -83,6 +83,7 @@ int main()
 	while (!window.ShouldClose())
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
+		defaultShader.SetUniformDouble("time", glfwGetTime());
 		script.Update();
 		window.PollAndSwap();
 	}
