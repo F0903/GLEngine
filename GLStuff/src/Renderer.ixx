@@ -23,6 +23,11 @@ struct RendererPtr
 	bool heapAlloc;
 	T* ptr;
 
+	void Delete()
+	{
+		delete ptr;
+	}
+
 	T* operator->()
 	{
 		return ptr;
@@ -63,8 +68,8 @@ export class Renderer
 
 	static void Free()
 	{
-		if (currentShader.heapAlloc) delete currentShader.ptr;
-		if (currentTexture.heapAlloc) delete currentTexture.ptr;
+		if (currentShader.heapAlloc) currentShader.Delete();
+		if (currentTexture.heapAlloc) currentTexture.Delete();
 		delete vertexArray;
 	}
 
@@ -82,12 +87,16 @@ export class Renderer
 
 	static void SetShader(RendererPtr<Shader> shader)
 	{
+		if (currentShader.heapAlloc)
+			currentShader.Delete();
 		currentShader = shader;
 		currentShader->Use();
 	}
 
 	static void SetTexture(RendererPtr<Texture> tex)
 	{
+		if (currentTexture.heapAlloc)
+			currentTexture.Delete();
 		currentTexture = tex;
 		currentTexture->Bind();
 		currentTexture->Free();

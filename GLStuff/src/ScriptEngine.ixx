@@ -56,8 +56,7 @@ export float GetPercentage(LuaState* lua, int argIndex)
 		const char ch = *(str - i - 2);
 		const int num = ch - 48;
 		const int step = pow(10, i);
-		const int a = num * step;
-		total += a;
+		total += num * step;
 	}
 	return total;
 }
@@ -119,6 +118,8 @@ export class ScriptEngine
 		lua_close(lua);
 	}
 
+	//TODO: Find a way to cache textures and set them without loading them from disk constantly.
+	// Like some kind of texture object or something.
 	public:
 	void Run(const char* file) const
 	{
@@ -131,7 +132,7 @@ export class ScriptEngine
 		for (const auto f : beforeUpdate)
 			f();
 
-		if (lua_pcall(lua, 0, 0, 0) != 0) //TODO: Will except if called more than once.
+		if (lua_pcall(lua, 0, 0, 0) != 0)
 		{
 			throw "Error running update";
 		}
