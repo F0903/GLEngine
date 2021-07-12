@@ -3,6 +3,7 @@ module;
 #include <vector>
 #include "lua/lua.hpp"
 export module ScriptEngine;
+import StringExpression;
 
 export using LuaState = lua_State;
 export using LuaCFunc = lua_CFunction;
@@ -26,14 +27,6 @@ export struct PctOrNum
 	const bool isPct;
 };
 
-int pow(int num, int pow)
-{
-	int total = num;
-	for (size_t i = 0; i < pow; i++)
-		total *= total;
-	return total;
-}
-
 export const char* GetString(LuaState* lua, int argIndex)
 {
 	return luaL_checkstring(lua, argIndex);
@@ -42,26 +35,11 @@ export const char* GetString(LuaState* lua, int argIndex)
 export float GetPercentage(LuaState* lua, int argIndex)
 {
 	const char* str = GetString(lua, argIndex);
-	int len = 0;
-	int total = 0;
-	while (*str)
-	{
-		++len;
-		++str;
-	}
-	if (*(str - 1) != '%')
-		return -1;
-	for (size_t i = 0; i < len - 1; i++)
-	{
-		const char ch = *(str - i - 2);
-		const int num = ch - 48;
-		const int step = pow(10, i);
-		total += num * step;
-	}
-	return total;
+	const auto expr = StringExpression(str);
+	return expr.GetNumericValue();
 }
 
-export int GetNumber(LuaState* lua, int argIndex)
+export int GetInteger(LuaState* lua, int argIndex)
 {
 	return luaL_checknumber(lua, argIndex);
 }
@@ -71,13 +49,31 @@ export PctOrNum GetPctOrNum(LuaState* lua, int argIndex)
 	float val;
 	if ((val = GetPercentage(lua, argIndex)) > 0)
 		return { val, true };
-	return { (float)GetNumber(lua, argIndex), false };
+	return { (float)GetInteger(lua, argIndex), false };
 }
 
 export void PushBoolean(LuaState* lua, bool value)
 {
 	lua_pushboolean(lua, value);
 }
+
+export void PushInteger(LuaState* lua, int value)
+{
+	lua_pushinteger(lua, value);
+}
+
+export struct ScriptEngineException : std::exception
+{
+	ScriptEngineException(const char* msg) : msg(msg)
+	{}
+
+	const char* msg;
+
+	const char* what() const override
+	{
+		return msg;
+	}
+};
 
 export class ScriptEngine
 {
@@ -118,8 +114,6 @@ export class ScriptEngine
 		lua_close(lua);
 	}
 
-	//TODO: Find a way to cache textures and set them without loading them from disk constantly.
-	// Like some kind of texture object or something.
 	public:
 	void Run(const char* file) const
 	{
@@ -134,7 +128,7 @@ export class ScriptEngine
 
 		if (lua_pcall(lua, 0, 0, 0) != 0)
 		{
-			throw "Error running update";
+			throw "Error running update. Please check your script.";
 		}
 
 		for (const auto f : afterUpdate)

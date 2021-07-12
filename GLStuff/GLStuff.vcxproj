@@ -197,7 +197,9 @@ exit/B %errlev%</Command>
     <ClCompile Include="src\Optional.ixx" />
     <ClCompile Include="src\Renderer.ixx" />
     <ClCompile Include="src\RenderSize.ixx" />
-    <ClCompile Include="src\ScriptEngine.ixx" />
+    <ClCompile Include="src\Scripting\ScriptEngine.ixx" />
+    <ClCompile Include="src\Scripting\StringExpression.ixx" />
+    <ClCompile Include="src\Scripting\TextureManager.ixx" />
     <ClCompile Include="src\Shader.ixx" />
     <ClCompile Include="src\SizedPtr.ixx" />
     <ClCompile Include="src\Texture.ixx" />

@@ -23,10 +23,11 @@ export class RenderSize
 	{}
 
 	private:
+	static inline const Viewport& view = Viewport::Get();
 	float value;
 	ValueType valueType;
 
-	float Normalize(Viewport view, NormalizationContext context)
+	float Normalize(NormalizationContext context)
 	{
 		switch (valueType)
 		{
@@ -43,15 +44,15 @@ export class RenderSize
 				switch (context)
 				{
 					case NormalizationContext::Width:
-						return (value / 100 * view.width) / view.width;
+						return (value * view.width) / view.width;
 					case NormalizationContext::Height:
-						return (value / 100 * view.height) / view.height;
+						return (value * view.height) / view.height;
 					default: throw "Invalid context in RenderSize.";
 				}
 			case ValueType::WidthPercentage:
-				return (value / 100 * view.width) / view.width;
+				return (value * view.width) / view.width;
 			case ValueType::HeightPercentage:
-				return (value / 100 * view.height) / view.height;
+				return (value * view.height) / view.height;
 			default: throw "Invalid value type in RenderSize.";
 		}
 		throw "Error when normalizing RenderSize.";
@@ -68,9 +69,9 @@ export class RenderSize
 		return RenderSize(value.value, value.isPct ? ValueType::GenericPercentage : ValueType::Pixels);
 	}
 
-	float Get(Viewport view, NormalizationContext context)
+	float Get(NormalizationContext context)
 	{
-		return Normalize(view, context);
+		return Normalize(context);
 	}
 
 	friend RenderSize operator ""_vw(long double num);

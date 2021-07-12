@@ -9,7 +9,7 @@ export class Window
 	public:
 	Window(int width, int height, const char* title)
 	{
-		init(width, height, title);
+		Init(width, height, title);
 	}
 
 	~Window()
@@ -17,12 +17,12 @@ export class Window
 		glfwDestroyWindow(win);
 	}
 
-private:
+	private:
 	GLFWwindow* win;
 	bool close;
 
-private:
-	void init(int width, int height, const char* title)
+	private:
+	void Init(int width, int height, const char* title)
 	{
 		if (!glfwInit())
 		{
@@ -34,9 +34,9 @@ private:
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef _MAC_OS
+		#ifdef _MAC_OS
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif // _MAC_OS
+		#endif // _MAC_OS
 
 		win = glfwCreateWindow(width, height, title, NULL, NULL);
 		if (!win)
@@ -48,14 +48,14 @@ private:
 		glfwMakeContextCurrent(win);
 	}
 
-public:
+	public:
 	Window WithTitle(const char* title) const
 	{
 		glfwSetWindowTitle(win, title);
 		return *this;
 	}
 
-	const bool ShouldClose() const 
+	const bool ShouldClose() const
 	{
 		return glfwWindowShouldClose(win);
 	}
