@@ -31,6 +31,8 @@ export enum class MipmapFiltering : GLint
 export class Texture
 {
 	public:
+	Texture(const Texture&) = delete;
+
 	Texture(const char* path)
 	{
 		glGenTextures(1, &id);

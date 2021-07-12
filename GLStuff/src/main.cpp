@@ -9,9 +9,13 @@ import Window;
 import Shader;
 import Renderer;
 import RenderSize;
+import Viewport;
 import Matrix;
 import ScriptEngine;
+import TextureManager;
 import Texture;
+
+TextureManager textures;
 
 void initOpenGl(GLFWwindow* win)
 {
@@ -27,7 +31,7 @@ void initOpenGl(GLFWwindow* win)
 	glViewport(0, 0, width, height);
 	glfwSetFramebufferSizeCallback(win, [](GLFWwindow* win, int width, int height)
 	{
-		Renderer::UpdateViewport(width, height);
+		Viewport::Update(width, height);
 	});
 }
 
@@ -44,13 +48,23 @@ int main()
 
 	auto script = ScriptEngine();
 
-	script.ExposeFn({ "SetTexture", [](LuaState* state) -> int
+	// Perhaps move these "exposed funcs" to somewhere else.
+	script.ExposeFn({ "LoadTexture", [](LuaState* state) -> int
 	{
 		const auto path = GetString(state, 1);
-		auto tex = new Texture(path);
-		tex->SetWrapMode(TextureWrap::BorderClamp);
-		tex->SetFilteringMode(TextureFiltering::Nearest, nullptr);
-		Renderer::SetTexture({ tex, true });
+		const auto id = textures.Load(path, [](Texture& tex)
+		{
+			tex.SetWrapMode(TextureWrap::BorderClamp);
+			tex.SetFilteringMode(TextureFiltering::Nearest, nullptr);
+		});
+		PushInteger(state, id);
+		return 1;
+	} });
+
+	script.ExposeFn({ "SetTexture", [](LuaState* state) -> int
+	{
+		const auto texId = GetInteger(state, 1);
+		Renderer::SetTexture(textures.Get(texId));
 		return 0;
 	} });
 
