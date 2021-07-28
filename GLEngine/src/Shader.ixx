@@ -5,12 +5,13 @@ module;
 #include <exception>
 #include "util.h"
 export module Shader;
+import Vector;
 
 using HandlerFn = const void(const char* source, int* const shaderID, const int programID);
 
 struct Uniform
 {
-	Uniform(const int& location) : location(location), isLocation(true)
+	Uniform(const int& location) : name{}, location(location), isLocation(true)
 	{}
 
 	Uniform(const char* name) : name(name), location{}, isLocation(false)
@@ -66,6 +67,7 @@ export class Shader
 		source[len] = '\0';
 		ParseShader(source);
 		delete[] source;
+		DEBUG_LOG("Finished parsing " << filePath);
 	}
 
 	private:
@@ -93,7 +95,7 @@ export class Shader
 
 	static const void HandleVertex(const char* source, int* const shaderId, const int programID)
 	{
-		DEBUG_LOG("VERTEX SHADER:\n" << source << '\n');
+		//DEBUG_LOG("VERTEX SHADER:\n" << source << '\n');
 		*shaderId = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(*shaderId, 1, &source, 0);
 		glCompileShader(*shaderId);
@@ -113,7 +115,7 @@ export class Shader
 
 	static const void HandleFragment(const char* source, int* const shaderId, const int programID)
 	{
-		DEBUG_LOG("FRAGMENT SHADER:\n" << source << '\n');
+		//DEBUG_LOG("FRAGMENT SHADER:\n" << source << '\n');
 		*shaderId = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(*shaderId, 1, &source, 0);
 		glCompileShader(*shaderId);
@@ -240,10 +242,17 @@ export class Shader
 		glUniform1f(location, value);
 	}
 
-	const void SetUniformDouble(Uniform uniform, double value) const
+	const void SetUniformIntVec2(Uniform uniform, Vector<2, int> value) const
 	{
 		Use();
 		int location = uniform.GetLocation(shaderProgramID);
-		glUniform1d(location, value);
+		glUniform2i(location, value.values[0], value.values[1]);
+	}
+
+	const void SetUniformFloatVec2(Uniform uniform, Vector<2, float> value) const
+	{
+		Use();
+		int location = uniform.GetLocation(shaderProgramID);
+		glUniform2f(location, value.values[0], value.values[1]);
 	}
 };

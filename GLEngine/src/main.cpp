@@ -37,14 +37,21 @@ void initOpenGl(GLFWwindow* win)
 
 int main()
 {
-	const auto window = Window(600, 500, "OpenGL Stuff");
-
+	const auto window = Window(600, 500, "GLEngine");
 	initOpenGl(window.GetRawWindow());
+	DEBUG_GL_CHECK();
+
+	auto& view = Viewport::Get();
+	view.Init();
+	DEBUG_GL_CHECK();
 
 	auto defaultShader = Shader("./resources/default.shader");
+	defaultShader.SetUniformFloatVec2("screen", { static_cast<float>(view.width), static_cast<float>(view.height) });
+	DEBUG_GL_CHECK();
 
 	Renderer::Init();
 	Renderer::SetShader(&defaultShader);
+	DEBUG_GL_CHECK();
 
 	auto script = ScriptEngine();
 
@@ -79,11 +86,13 @@ int main()
 	} });
 
 	script.Run("./resources/Test.lua");
+	DEBUG_GL_CHECK();
 
 	while (!window.ShouldClose())
 	{
+		DEBUG_GL_CHECK();
 		glClear(GL_COLOR_BUFFER_BIT);
-		defaultShader.SetUniformDouble("time", glfwGetTime());
+		defaultShader.SetUniformFloat("time", glfwGetTime());
 		script.Update();
 		window.PollAndSwap();
 	}

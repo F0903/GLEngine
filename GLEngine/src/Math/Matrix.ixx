@@ -1,8 +1,9 @@
 module;
 #include <initializer_list>
 export module Matrix;
+import Vector;
 
-export template<class T = float, const size_t N = 3>
+export template<const size_t N = 3, class T = float>
 class Matrix
 {
 	public:
@@ -27,7 +28,7 @@ class Matrix
 	public:
 	static Matrix Identity()
 	{
-		Matrix<T, N> newMat = Matrix();
+		Matrix<N, T> newMat = Matrix();
 		for (size_t x = 0, y = 0; x < N; x++, y++)
 		{
 			newMat.values[x][y] = 1;
@@ -37,7 +38,7 @@ class Matrix
 
 	Matrix Add(const Matrix& other)
 	{
-		Matrix<T, N> newMat = Matrix();
+		Matrix<N, T> newMat = Matrix();
 		for (size_t x = 0; x < N; x++)
 		{
 			for (size_t y = 0; y < N; y++)
@@ -50,7 +51,7 @@ class Matrix
 
 	Matrix Sub(const Matrix& other)
 	{
-		Matrix<T, N> newMat = Matrix();
+		Matrix<N, T> newMat = Matrix();
 		for (size_t x = 0; x < N; x++)
 		{
 			for (size_t y = 0; y < N; y++)
@@ -63,7 +64,7 @@ class Matrix
 
 	Matrix Dot(const Matrix& other)
 	{
-		Matrix<T, N> newMat = Matrix();
+		Matrix<N, T> newMat = Matrix();
 		for (size_t row = 0; row < N; row++)
 		{
 			for (size_t col = 0; col < N; col++)
@@ -81,7 +82,7 @@ class Matrix
 
 	Matrix Cross(const Matrix& other)
 	{
-		Matrix<T, N> newMat = Matrix();
+		Matrix<N, T> newMat = Matrix();
 		for (size_t i = 0; i < N; i++)
 		{
 			for (size_t x = 0, y = 0; x < N; x++, y++)

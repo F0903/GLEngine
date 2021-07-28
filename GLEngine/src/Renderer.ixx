@@ -53,7 +53,7 @@ export class Renderer
 		vertexArray->SetAttribute(1, { 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, texCoords) }); // Texture coords
 		DEBUG_GL_CHECK();
 
-		currentTexture->Bind();
+		if (currentTexture) currentTexture->Bind();
 		currentShader->Use();
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, ind.GetDataSize(), GL_UNSIGNED_INT, 0);
